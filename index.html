@@ -335,3 +335,100 @@
   </script>
 </body>
 </html>
+  /* ================== Carrito ================== */
+  const cartCount = $("#cartCount");
+  const cartItems = $("#cartItems");
+  const cartSubtotal = $("#cartSubtotal");
+  const cartTotal = $("#cartTotal");
+  const cartDrawer = $("#cartDrawer");
+  const backdrop = $("#backdrop");
+
+  function addToCart(prod){
+    const found = state.cart.find(i=>i.id===prod.id);
+    if (found) found.qty += 1; 
+    else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+    persistCart(); openCart(); drawCart();
+  }
+  function removeFromCart(id){
+    state.cart = state.cart.filter(i=>i.id!==id);
+    persistCart(); drawCart();
+  }
+  function changeQty(id, delta){
+    const item = state.cart.find(i=>i.id===id);
+    if(!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    persistCart(); drawCart();
+  }
+  function persistCart(){
+    localStorage.setItem("cart", JSON.stringify(state.cart));
+    cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
+  }
+  function drawCart(){
+    if(!state.cart.length){
+      cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
+      cartSubtotal.textContent = money(0);
+      cartTotal.textContent = money(0);
+      persistCart();
+      return;
+    }
+    cartItems.innerHTML = state.cart.map(i=>`
+      <div class="cartline">
+        <div class="cartline__info">
+          <strong>${i.name}</strong>
+          <span>${money(i.price)}</span>
+        </div>
+        <div class="cartline__qty">
+          <button type="button" data-dec="${i.id}">−</button>
+          <span>${i.qty}</span>
+          <button type="button" data-inc="${i.id}">+</button>
+          <button type="button" class="link danger" data-del="${i.id}">Quitar</button>
+        </div>
+      </div>
+    `).join("");
+
+    const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
+    cartSubtotal.textContent = money(sub);
+    cartTotal.textContent = money(sub);
+    persistCart();
+  }
+
+  // ✅ Listener único para botones del carrito
+  cartItems.onclick = (e) => {
+    const t = e.target;
+    if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
+    if (t.matches("[data-dec]")) return changeQty(Number(t.dataset.dec), -1);
+    if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
+  };
+
+  // ✅ Funciones abrir/cerrar con bloqueo de scroll
+  function openCart(){
+    cartDrawer.classList.add("open");
+    backdrop.classList.add("show");
+    document.body.classList.add("noscroll");   // bloquea el scroll
+  }
+  function closeCart(){
+    cartDrawer.classList.remove("open");
+    backdrop.classList.remove("show");
+    document.body.classList.remove("noscroll");
+  }
+
+  // ✅ Cierre con tecla ESC
+  document.addEventListener("keydown", (e)=>{
+    if (e.key === "Escape" && cartDrawer.classList.contains("open")) {
+      closeCart();
+    }
+  });
+
+  $("#checkoutBtn").addEventListener("click", ()=>{
+    const url = buildWhatsappLink();
+    if(!url) return alert("El carrito está vacío.");
+    window.open(url, "_blank");
+  });
+  $("#clearCart").addEventListener("click", ()=>{
+    state.cart = []; persistCart(); drawCart();
+  });
+  $("#openCart").addEventListener("click", openCart);
+  $("#closeCart").addEventListener("click", closeCart);
+  $("#backdrop").addEventListener("click", closeCart);
+
+
