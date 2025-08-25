@@ -278,7 +278,7 @@
     if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
   };
 
-  // ✅ Funciones abrir/cerrar con bloqueo de scroll
+  // ✅ Abrir/cerrar carrito con bloqueo de scroll
   function openCart(){
     cartDrawer.classList.add("open");
     backdrop.classList.add("show");
@@ -290,7 +290,7 @@
     document.body.classList.remove("noscroll");
   }
 
-  // ✅ Cierre con tecla ESC
+  // ✅ Cerrar con tecla ESC
   document.addEventListener("keydown", (e)=>{
     if (e.key === "Escape" && cartDrawer.classList.contains("open")) {
       closeCart();
@@ -337,4 +337,13 @@
   });
   $("#clearChips").addEventListener("click", ()=>{
     state.chips.clear();
-    $$("#promoChips .chip").forEach(ch=>ch
+    $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active"));
+    render();
+  });
+
+  //
+
+ 
+
+     
+     
