@@ -78,19 +78,23 @@ h1{margin:24px 0 12px}
 .cart{
   position:fixed;
   top:0;
-  right:-420px;      /* escondido al inicio */
+  right:0;                 /* ahora anclado a la derecha */
   width:420px;
   max-width:96%;
   height:100%;
   background:#0b1220;
   border-left:1px solid var(--border);
   box-shadow:-16px 0 40px rgba(0,0,0,.35);
-  transition:.2s;    /* transición suave */
-  z-index:100;       /* arriba del backdrop */
+  transform:translateX(100%);                     /* ⟵ fuera de pantalla */
+  transition:transform .35s cubic-bezier(.22,.61,.36,1);  /* ⟵ easing suave */
+  will-change:transform;
+  z-index:100;
   display:flex;
   flex-direction:column;
 }
-.cart.open{ right:0; }
+.cart.open{
+  transform:translateX(0);                        /* ⟵ entra suave */
+}
 
 .cart__header{
   display:flex;
@@ -140,10 +144,19 @@ h1{margin:24px 0 12px}
   background:rgba(0,0,0,.45);
   opacity:0;
   visibility:hidden;
-  transition:.2s;
-  z-index:90;        /* debajo del carrito */
+  transition:opacity .25s ease, visibility .25s ease;
+  z-index:90;
 }
 .backdrop.show{
   opacity:1;
   visibility:visible;
+}
+
+/* (Opcional) Evitar scroll del body cuando el carrito está abierto */
+body.noscroll{ overflow:hidden; }
+
+/* Respeto a usuarios con reducción de movimiento */
+@media (prefers-reduced-motion: reduce){
+  .cart{ transition:none; }
+  .backdrop{ transition:none; }
 }
