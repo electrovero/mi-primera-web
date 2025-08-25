@@ -270,7 +270,7 @@
     persistCart();
   }
 
-  // ✅ Listener único para los botones del carrito
+  // ✅ Listener único para botones del carrito
   cartItems.onclick = (e) => {
     const t = e.target;
     if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
@@ -278,8 +278,24 @@
     if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
   };
 
-  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); }
-  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); }
+  // ✅ Funciones abrir/cerrar con bloqueo de scroll
+  function openCart(){
+    cartDrawer.classList.add("open");
+    backdrop.classList.add("show");
+    document.body.classList.add("noscroll");
+  }
+  function closeCart(){
+    cartDrawer.classList.remove("open");
+    backdrop.classList.remove("show");
+    document.body.classList.remove("noscroll");
+  }
+
+  // ✅ Cierre con tecla ESC
+  document.addEventListener("keydown", (e)=>{
+    if (e.key === "Escape" && cartDrawer.classList.contains("open")) {
+      closeCart();
+    }
+  });
 
   // Checkout WhatsApp
   function buildWhatsappLink(){
@@ -321,18 +337,4 @@
   });
   $("#clearChips").addEventListener("click", ()=>{
     state.chips.clear();
-    $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active"));
-    render();
-  });
-
-  // WhatsApp flotante y año
-  const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
-  $("#whatsFloating").setAttribute("href", wlink);
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  // Init
-  persistCart(); drawCart(); render();
-  </script>
-</body>
-</html>
-  
+    $$("#promoChips .chip").forEach(ch=>ch
