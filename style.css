@@ -75,7 +75,8 @@ h1{margin:24px 0 12px}
 .footer a:hover{color:var(--text)}
 
 /* Carrito drawer */
-position:fixed;
+.cart{
+  position:fixed;
   top:0;
   right:-420px;      /* escondido al inicio */
   width:420px;
@@ -90,6 +91,7 @@ position:fixed;
   flex-direction:column;
 }
 .cart.open{ right:0; }
+
 .cart__header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding:12px}
 .cart__items{padding:12px;flex:1;overflow:auto}
 .cart__footer{border-top:1px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:10px}
@@ -113,4 +115,3 @@ position:fixed;
   opacity:1;
   visibility:visible;
 }
-
