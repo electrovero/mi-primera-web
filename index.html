@@ -341,9 +341,20 @@
     render();
   });
 
-  //
+  // WhatsApp flotante y año
+  const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
+  $("#whatsFloating").setAttribute("href", wlink);
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Init
+  persistCart(); drawCart(); render();
+  </script>
+</body>
+</html>
+
 
  
 
      
      
+
