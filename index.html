@@ -156,24 +156,21 @@
   ];
 
   /* ================== Config rápida ================== */
-  const WHATSAPP_NUMBER = "5491127631167"; // tu número en formato internacional
+  const WHATSAPP_NUMBER = "5491127631167";
 
-  /* ================== Utilidades ================== */
+  /* ================== Helpers ================== */
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
   const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
-  /* ================== Estado ================== */
+  /* ================== Estado/Render ================== */
   const grid = $("#productsGrid");
   let state = {
-    q: "",
-    category: "all",
-    sort: "relevancia",
+    q: "", category: "all", sort: "relevancia",
     chips: new Set(),
     cart: JSON.parse(localStorage.getItem("cart") || "[]")
   };
 
-  /* ================== Render productos ================== */
   function productCard(p){
     const chipBadges = p.tags.map(t => `<span class="badge badge--${t}">${t}</span>`).join("");
     return `
@@ -195,12 +192,8 @@
       const q = state.q.toLowerCase();
       res = res.filter(p => (p.name + " " + p.category).toLowerCase().includes(q));
     }
-    if (state.category !== "all"){
-      res = res.filter(p => p.category === state.category);
-    }
-    if (state.chips.size){
-      res = res.filter(p => [...state.chips].every(tag => p.tags.includes(tag)));
-    }
+    if (state.category !== "all") res = res.filter(p => p.category === state.category);
+    if (state.chips.size) res = res.filter(p => [...state.chips].every(tag => p.tags.includes(tag)));
     switch(state.sort){
       case "precio-asc": res.sort((a,b)=>a.price-b.price); break;
       case "precio-desc": res.sort((a,b)=>b.price-a.price); break;
@@ -232,9 +225,7 @@
   function addToCart(prod){
     const found = state.cart.find(i=>i.id===prod.id);
     if (found) found.qty += 1; else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
-    persistCart();
-    openCart();
-    drawCart();
+    persistCart(); openCart(); drawCart();
   }
   function removeFromCart(id){
     state.cart = state.cart.filter(i=>i.id!==id);
@@ -334,10 +325,13 @@
     render();
   });
 
-  // WhatsApp flotante
-  const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text
+  // WhatsApp flotante y año
+  const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
+  $("#whatsFloating").setAttribute("href", wlink);
+  document.getElementById("year").textContent = new Date().getFullYear();
 
-
-
-
-
+  // Init
+  persistCart(); drawCart(); render();
+  </script>
+</body>
+</html>
