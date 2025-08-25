@@ -3,45 +3,347 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mi Primera Página</title>
+  <title>Nahuel Electrohogar | Tienda de Electrodomésticos</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="container">
-    <h1>Hola, soy Nahuel 👋</h1>
-    <p>Ésta es mi primera página web.</p>
-    <nav>
-      <a href="#inicio">Inicio</a>
-      <a href="#sobre-mi">Sobre mí</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <span>Envíos a todo el país · 3 y 6 cuotas sin interés</span>
+      <a href="#contacto">Ayuda</a>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="#" class="logo">Nahuel<span>Electro</span></a>
+
+      <div class="searchbox">
+        <input id="searchInput" type="search" placeholder="Buscar: heladera, TV, lavarropas..." />
+        <button id="searchBtn">Buscar</button>
+      </div>
+
+      <button id="openCart" class="cartbtn" aria-label="Abrir carrito">🛒<span id="cartCount" class="badge">0</span></button>
+    </div>
   </header>
 
+  <!-- Filtros -->
+  <section class="filters">
+    <div class="container filters__inner">
+      <div class="selects">
+        <select id="categoryFilter">
+          <option value="all">Todas las categorías</option>
+          <option value="Heladeras">Heladeras</option>
+          <option value="Lavarropas">Lavarropas</option>
+          <option value="Microondas">Microondas</option>
+          <option value="Aires">Aires Acond.</option>
+          <option value="TV">Smart TV</option>
+          <option value="Cocinas">Cocinas</option>
+          <option value="Pequeños">Pequeños</option>
+        </select>
+
+        <select id="sortBy">
+          <option value="relevancia">Ordenar por: Relevancia</option>
+          <option value="precio-asc">Precio: menor a mayor</option>
+          <option value="precio-desc">Precio: mayor a menor</option>
+          <option value="nombre-asc">Nombre A→Z</option>
+        </select>
+      </div>
+
+      <div class="chips" id="promoChips">
+        <button class="chip" data-chip="envio">🚚 Envío gratis</button>
+        <button class="chip" data-chip="cuotas">💳 6 cuotas</button>
+        <button class="chip" data-chip="oferta">🔥 Oferta</button>
+        <button id="clearChips" class="link">Limpiar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid de productos -->
   <main class="container">
-    <section id="inicio">
-      <h2>Inicio</h2>
-      <p>Bienvenido a mi sitio. Voy a mostrar mis proyectos e ideas.</p>
-      <img src="img/hero-ejemplo.png" alt="Imagen de ejemplo" class="hero"/>
-    </section>
-
-    <section id="sobre-mi">
-      <h2>Sobre mí</h2>
-      <p>Me gusta aprender desarrollo web y crear cosas útiles.</p>
-      <ul>
-        <li>HTML + CSS</li>
-        <li>JavaScript</li>
-        <li>Experimentos y proyectos</li>
-      </ul>
-    </section>
-
-    <section id="contacto">
-      <h2>Contacto</h2>
-      <p>Puedes escribirme a <a href="mailto:tu_correo@example.com">tu_correo@example.com</a></p>
-    </section>
+    <h1>Ofertas destacadas</h1>
+    <div id="productsGrid" class="grid"></div>
   </main>
 
-  <footer class="container">
-    <p>© 2025 Mi Primera Página</p>
+  <!-- Confianza / ventajas -->
+  <section class="trust">
+    <div class="container trust__inner">
+      <div class="trust__item">✅ Garantía oficial</div>
+      <div class="trust__item">🚚 Envío a todo el país</div>
+      <div class="trust__item">🔒 Compra segura</div>
+      <div class="trust__item">💬 Atención por WhatsApp</div>
+    </div>
+  </section>
+
+  <!-- Preguntas frecuentes -->
+  <section class="container faq">
+    <h2>Preguntas frecuentes</h2>
+    <details>
+      <summary>¿Hacen envíos a todo el país?</summary>
+      <p>Sí, trabajamos con OCA/Andreani y transporte propio en AMBA.</p>
+    </details>
+    <details>
+      <summary>¿Puedo pagar en cuotas?</summary>
+      <p>3 y 6 cuotas sin interés con bancos adheridos. Consultá promos.</p>
+    </details>
+    <details>
+      <summary>¿Tienen garantía?</summary>
+      <p>Todos los productos cuentan con garantía oficial del fabricante.</p>
+    </details>
+  </section>
+
+  <!-- Contacto -->
+  <section id="contacto" class="container contact">
+    <h2>Contacto</h2>
+    <p>¿Duda puntual? Escribinos por WhatsApp y te respondemos al toque.</p>
+    <a class="btn btn--whatsapp" id="whatsFloating" target="_blank" rel="noreferrer">💬 WhatsApp</a>
+  </section>
+
+  <!-- Carrito (drawer) -->
+  <aside id="cartDrawer" class="cart">
+    <div class="cart__header">
+      <h3>Tu carrito</h3>
+      <button id="closeCart" aria-label="Cerrar">✕</button>
+    </div>
+    <div id="cartItems" class="cart__items"></div>
+    <div class="cart__footer">
+      <div class="cart__row">
+        <span>Subtotal</span>
+        <strong id="cartSubtotal">$ 0</strong>
+      </div>
+      <div class="cart__row">
+        <span>Envío</span>
+        <span>Se coordina</span>
+      </div>
+      <div class="cart__total">
+        <span>Total</span>
+        <strong id="cartTotal">$ 0</strong>
+      </div>
+      <button id="checkoutBtn" class="btn btn--primary">Finalizar compra por WhatsApp</button>
+      <button id="clearCart" class="btn btn--ghost">Vaciar carrito</button>
+    </div>
+  </aside>
+  <div id="backdrop" class="backdrop"></div>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>© <span id="year"></span> Nahuel Electrohogar</p>
+      <nav>
+        <a href="#contacto">Contacto</a>
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+      </nav>
+    </div>
   </footer>
+
+  <script>
+  /* ================== Datos de productos (editá a gusto) ================== */
+  const PRODUCTS = [
+    { id: 1, name: "Heladera No Frost 360L", category: "Heladeras", price: 699999, img: "https://images.unsplash.com/photo-1603715749728-773db2ba9a4a?q=80&w=1200&auto=format&fit=crop", tags: ["envio","cuotas"] },
+    { id: 2, name: "Lavarropas 8kg Inverter", category: "Lavarropas", price: 589999, img: "https://images.unsplash.com/photo-1581579188871-45ea61f2a0c8?q=80&w=1200&auto=format&fit=crop", tags: ["cuotas"] },
+    { id: 3, name: "Microondas 28L Grill", category: "Microondas", price: 149999, img: "https://images.unsplash.com/photo-1592247350271-cd6f2f1fcd7d?q=80&w=1200&auto=format&fit=crop", tags: ["envio","oferta"] },
+    { id: 4, name: "Aire Acondicionado 3000W Frío/Calor", category: "Aires", price: 799999, img: "https://images.unsplash.com/photo-1624526267820-0f5fdb3dfcc1?q=80&w=1200&auto=format&fit=crop", tags: ["envio"] },
+    { id: 5, name: "Smart TV 55\" 4K", category: "TV", price: 679999, img: "https://images.unsplash.com/photo-1593359677879-454ead5a0e5b?q=80&w=1200&auto=format&fit=crop", tags: ["cuotas","oferta"] },
+    { id: 6, name: "Cocina a Gas 55cm", category: "Cocinas", price: 319999, img: "https://images.unsplash.com/photo-1556912998-c57cc6b63cd7?q=80&w=1200&auto=format&fit=crop", tags: [] },
+    { id: 7, name: "Pava Eléctrica Inox 1.7L", category: "Pequeños", price: 45999, img: "https://images.unsplash.com/photo-1517959105821-eaf2591984dd?q=80&w=1200&auto=format&fit=crop", tags: ["oferta"] },
+    { id: 8, name: "Aspiradora Ciclónica 2000W", category: "Pequeños", price: 119999, img: "https://images.unsplash.com/photo-1603715749710-3da76e8864c5?q=80&w=1200&auto=format&fit=crop", tags: [] },
+  ];
+
+  /* ================== Config rápida ================== */
+  // Número de WhatsApp (sin + ni 0 ni 15). Ej: Argentina 11xxxxxxx
+  const WHATSAPP_NUMBER = "5491123456789"; // cambiá por el tuyo (cód país+área+número). 54 = AR
+
+  /* ================== Utilidades ================== */
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
+  const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+
+  /* ================== Render productos ================== */
+  const grid = $("#productsGrid");
+  let state = {
+    q: "",
+    category: "all",
+    sort: "relevancia",
+    chips: new Set(), // "envio", "cuotas", "oferta"
+    cart: JSON.parse(localStorage.getItem("cart") || "[]")
+  };
+
+  function productCard(p){
+    const chipBadges = p.tags.map(t => `<span class="badge badge--${t}">${t}</span>`).join("");
+    return `
+      <article class="card">
+        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
+        <div class="card-body">
+          <h3 class="card-title">${p.name}</h3>
+          <div class="price">${money(p.price)}</div>
+          <div class="badges">${chipBadges}</div>
+          <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
+        </div>
+      </article>
+    `;
+  }
+
+  function applyFilters(list){
+    let res = [...list];
+
+    // búsqueda
+    if (state.q.trim()){
+      const q = state.q.toLowerCase();
+      res = res.filter(p => (p.name + " " + p.category).toLowerCase().includes(q));
+    }
+    // categoría
+    if (state.category !== "all"){
+      res = res.filter(p => p.category === state.category);
+    }
+    // chips
+    if (state.chips.size){
+      res = res.filter(p => [...state.chips].every(tag => p.tags.includes(tag)));
+    }
+    // orden
+    switch(state.sort){
+      case "precio-asc": res.sort((a,b)=>a.price-b.price); break;
+      case "precio-desc": res.sort((a,b)=>b.price-a.price); break;
+      case "nombre-asc": res.sort((a,b)=>a.name.localeCompare(b.name)); break;
+      default: break;
+    }
+    return res;
+  }
+
+  function render(){
+    const list = applyFilters(PRODUCTS);
+    grid.innerHTML = list.map(productCard).join("") || `<p class="muted">No se encontraron productos con esos filtros.</p>`;
+    // bind add buttons
+    $$("[data-add]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = Number(btn.getAttribute("data-add"));
+        const prod = PRODUCTS.find(p=>p.id===id);
+        addToCart(prod);
+      });
+    });
+  }
+
+  /* ================== Carrito ================== */
+  const cartCount = $("#cartCount");
+  const cartItems = $("#cartItems");
+  const cartSubtotal = $("#cartSubtotal");
+  const cartTotal = $("#cartTotal");
+  const cartDrawer = $("#cartDrawer");
+  const backdrop = $("#backdrop");
+
+  function addToCart(prod){
+    const found = state.cart.find(i=>i.id===prod.id);
+    if (found) found.qty += 1; else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+    persistCart();
+    openCart();
+    drawCart();
+  }
+  function removeFromCart(id){
+    state.cart = state.cart.filter(i=>i.id!==id);
+    persistCart(); drawCart();
+  }
+  function changeQty(id, delta){
+    const item = state.cart.find(i=>i.id===id);
+    if(!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    persistCart(); drawCart();
+  }
+  function persistCart(){
+    localStorage.setItem("cart", JSON.stringify(state.cart));
+    cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
+  }
+  function drawCart(){
+    if(!state.cart.length){
+      cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
+      cartSubtotal.textContent = money(0);
+      cartTotal.textContent = money(0);
+      persistCart();
+      return;
+    }
+    cartItems.innerHTML = state.cart.map(i=>`
+      <div class="cartline">
+        <div class="cartline__info">
+          <strong>${i.name}</strong>
+          <span>${money(i.price)}</span>
+        </div>
+        <div class="cartline__qty">
+          <button data-dec="${i.id}">−</button>
+          <span>${i.qty}</span>
+          <button data-inc="${i.id}">+</button>
+          <button class="link danger" data-del="${i.id}">Quitar</button>
+        </div>
+      </div>
+    `).join("");
+
+    const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
+    cartSubtotal.textContent = money(sub);
+    cartTotal.textContent = money(sub); // envío se coordina
+    persistCart();
+
+    // bind qty buttons
+    $$("[data-inc]").forEach(b=>b.addEventListener("click", ()=>changeQty(Number(b.dataset.inc), +1)));
+    $$("[data-dec]").forEach(b=>b.addEventListener("click", ()=>changeQty(Number(b.dataset.dec), -1)));
+    $$("[data-del]").forEach(b=>b.addEventListener("click", ()=>removeFromCart(Number(b.dataset.del))));
+  }
+
+  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); }
+  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); }
+
+  // Checkout WhatsApp
+  function buildWhatsappLink(){
+    if(!state.cart.length) return null;
+    const lines = state.cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
+    const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+  }
+
+  $("#checkoutBtn").addEventListener("click", ()=>{
+    const url = buildWhatsappLink();
+    if(!url) return alert("El carrito está vacío.");
+    window.open(url, "_blank");
+  });
+  $("#clearCart").addEventListener("click", ()=>{
+    state.cart = []; persistCart(); drawCart();
+  });
+  $("#openCart").addEventListener("click", openCart);
+  $("#closeCart").addEventListener("click", closeCart);
+  $("#backdrop").addEventListener("click", closeCart);
+
+  /* ================== Búsqueda / Filtros ================== */
+  $("#searchBtn").addEventListener("click", ()=>{
+    state.q = $("#searchInput").value || "";
+    render();
+  });
+  $("#searchInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ state.q = e.target.value; render(); }});
+  $("#categoryFilter").addEventListener("change", (e)=>{ state.category = e.target.value; render(); });
+  $("#sortBy").addEventListener("change", (e)=>{ state.sort = e.target.value; render(); });
+
+  // Chips promo
+  $$("#promoChips .chip").forEach(ch=>{
+    ch.addEventListener("click", ()=>{
+      const t = ch.dataset.chip;
+      if(state.chips.has(t)) state.chips.delete(t); else state.chips.add(t);
+      ch.classList.toggle("chip--active");
+      render();
+    });
+  });
+  $("#clearChips").addEventListener("click", ()=>{
+    state.chips.clear();
+    $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active"));
+    render();
+  });
+
+  // WhatsApp flotante
+  const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
+  $("#whatsFloating").setAttribute("href", wlink);
+
+  // Init
+  document.getElementById("year").textContent = new Date().getFullYear();
+  persistCart(); drawCart(); render();
+  </script>
 </body>
 </html>
