@@ -332,37 +332,23 @@
     cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
   }
   function drawCart(){
-    if(!state.cart.length){
-      cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
-      cartSubtotal.textContent = money(0);
-      cartTotal.textContent = money(0);
-      persistCart();
-      return;
-    }
-    cartItems.innerHTML = state.cart.map(i=>`
-      <div class="cartline">
-        <div class="cartline__info">
-          <strong>${i.name}</strong>
-          <span>${money(i.price)}</span>
-        </div>
-        <div class="cartline__qty">
-          <button data-dec="${i.id}">−</button>
-          <span>${i.qty}</span>
-          <button data-inc="${i.id}">+</button>
-          <button class="link danger" data-del="${i.id}">Quitar</button>
-        </div>
-      </div>
-    `).join("");
-
-    const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
-    cartSubtotal.textContent = money(sub);
-    cartTotal.textContent = money(sub); // envío se coordina
+  if(!state.cart.length){
+    cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
+    cartSubtotal.textContent = money(0);
+    cartTotal.textContent = money(0);
     persistCart();
+    return;
+  }
+  cartItems.onclick = (e) => {
+  const t = e.target;
+  if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
+  if (t.matches("[data-dec]")) return changeQty(Number(t.dataset.dec), -1);
+  if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
+};
+
 
     // bind qty buttons
-    $$("[data-inc]").forEach(b=>b.addEventListener("click", ()=>changeQty(Number(b.dataset.inc), +1)));
-    $$("[data-dec]").forEach(b=>b.addEventListener("click", ()=>changeQty(Number(b.dataset.dec), -1)));
-    $$("[data-del]").forEach(b=>b.addEventListener("click", ()=>removeFromCart(Number(b.dataset.del))));
+    
   }
 
   function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); }
@@ -423,6 +409,7 @@
   </script>
 </body>
 </html>
+
 
 
 
