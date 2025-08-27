@@ -185,30 +185,18 @@
   <script>
   /* ================== Datos de productos ================== */
   const PRODUCTS = [
-  // ====== EXISTENTES ======
-  { id: 1,  name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
-  { id: 2,  name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg", tags: ["cuotas","envio"] },
-  { id: 3,  name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
-  { id: 4,  name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] },
-  { id: 5,  name: "Aire Acondicionado Split 3000W Frío/Calor", category: "Aires", price: 799999, img: "./img/aire-split-3000w.jpg", tags: ["envio"] },
-  { id: 6,  name: "Pava Eléctrica Inox 1.7L", category: "Pequeños", price: 45999,  img: "./img/pava-inox-17.jpg", tags: ["oferta"] },
-  { id: 7,  name: "Aspiradora Ciclónica 2000W", category: "Pequeños", price: 119999, img: "./img/aspiradora-2000w.jpg", tags: ["cuotas"] },
-  { id: 8,  name: "Licuadora Oster 600W Jarra Vidrio", category: "Pequeños", price: 79999,  img: "./img/licuadora-oster-600w.jpg", tags: ["envio"] },
-  { id: 9,  name: "Tostadora Eléctrica Philips", category: "Pequeños", price: 55999,  img: "./img/tostadora-philips.jpg", tags: ["oferta"] },
-  { id: 10, name: "Plancha a Vapor Philips 2200W", category: "Pequeños", price: 69999,  img: "./img/plancha-philips-2200w.jpg", tags: ["envio","cuotas"] },
-  { id: 11, name: "Cocina Orbis 56cm Acero", category: "Cocinas", price: 459999, img: "./img/cocina-orbis-56cm.jpg", tags: ["oferta","envio"] },
+  // TVs con nombres limpios (kebab-case)
+{ id: 20, name: "TV RCA 50\"",         category: "TV", price: 349999, img: "./img/tv-50-rca.jpg",           tags: ["oferta","envio"] },
+{ id: 21, name: "TV Noblex 100\"",     category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg",       tags: ["cuotas","envio"] },
+{ id: 22, name: "TV Noblex 75\"",      category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg",        tags: ["oferta","cuotas"] },
+{ id: 23, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg",   tags: ["envio"] },
+{ id: 24, name: "TV Philips 50\"",     category: "TV", price: 359999, img: "./img/tv-philips-50.jpg",       tags: ["oferta"] },
+{ id: 25, name: "TV Philips 65\"",     category: "TV", price: 459999, img: "./img/tv-philips-65.jpg",       tags: ["cuotas","envio"] },
+{ id: 26, name: "TV Quint 32\"",       category: "TV", price: 159999, img: "./img/tv-quint-32.jpg",         tags: ["envio"] },
+{ id: 27, name: "TV Sharp 50\"",       category: "TV", price: 329999, img: "./img/tv-sharp-50.jpg",         tags: ["oferta"] },
+{ id: 28, name: "TV TCL 43\"",         category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg",           tags: ["envio","cuotas"] },
+{ id: 29, name: "TV Xiaomi 86\"",      category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg",        tags: ["oferta","cuotas","envio"] }
 
-  // ====== TUS TVs (con %20 por espacios) ======
-  { id: 20, name: "TV RCA 50\"",        category: "TV", price: 349999, img: "./img/tv%2050%20rca.jpg",           tags: ["oferta","envio"] },
-  { id: 21, name: "TV Noblex 100\"",    category: "TV", price: 799999, img: "./img/TV%20Noblex%20100.jpg",       tags: ["cuotas","envio"] },
-  { id: 22, name: "TV Noblex 75\"",     category: "TV", price: 659999, img: "./img/TV%20Noblex%2075.jpg",        tags: ["oferta","cuotas"] },
-  { id: 23, name: "TV Noblex Roku 43\"",category: "TV", price: 289999, img: "./img/TV%20Noblex%20Roku%2043.jpg", tags: ["envio"] },
-  { id: 24, name: "TV Philips 50\"",    category: "TV", price: 359999, img: "./img/TV%20Philips%2050.jpg",       tags: ["oferta"] },
-  { id: 25, name: "TV Philips 65\"",    category: "TV", price: 459999, img: "./img/TV%20Philips%2065.jpg",       tags: ["cuotas","envio"] },
-  { id: 26, name: "TV Quint 32\"",      category: "TV", price: 159999, img: "./img/TV%20quint%2032.jpg",         tags: ["envio"] },
-  { id: 27, name: "TV Sharp 50\"",      category: "TV", price: 329999, img: "./img/TV%20Sharp%2050.jpg",         tags: ["oferta"] },
-  { id: 28, name: "TV TCL 43\"",        category: "TV", price: 259999, img: "./img/TV%20TCL%2043.jpg",           tags: ["envio","cuotas"] },
-  { id: 29, name: "TV Xiaomi 86\"",     category: "TV", price: 899999, img: "./img/TV%20Xiaomi%2086.jpg",        tags: ["oferta","cuotas","envio"] }
 ];
 
 
@@ -490,6 +478,7 @@
   </script>
 </body>
 </html>
+
 
 
 
