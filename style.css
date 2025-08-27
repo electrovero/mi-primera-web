@@ -138,4 +138,52 @@ body.noscroll{ overflow:hidden; }
   .cart{ transition:none }
   .backdrop{ transition:none }
 }
+/* ====== Categorías estilo mosaico ====== */
+.cats{ background:var(--panel); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.cats__head{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:16px 0; }
+.cats__grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+@media(min-width:760px){ .cats__grid{ grid-template-columns: repeat(6, minmax(0,1fr)); } }
+.cat{
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:10px; text-align:center; cursor:pointer; transition:.15s;
+  display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center;
+}
+.cat:hover{ transform:translateY(-2px); }
+.cat__emoji{ font-size:28px; }
+.cat__name{ font-weight:600; }
+.cat__count{ color:var(--muted); font-size:14px; }
+
+/* ====== Nuevos productos (fila scrollable) ====== */
+.newprods{ background:var(--panel); border-bottom:1px solid var(--border); }
+.newprods__head{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:16px 0; }
+.newprods__row{
+  display:flex; gap:12px; overflow:auto; padding-bottom:10px; scroll-snap-type: x mandatory;
+}
+.newcard{
+  min-width:220px; max-width:220px; background:var(--card);
+  border:1px solid var(--border); border-radius:14px; overflow:hidden; scroll-snap-align:center;
+}
+.newcard img{ width:100%; height:140px; object-fit:cover; display:block; }
+.newcard__body{ padding:10px; display:flex; flex-direction:column; gap:6px; }
+.newcard__title{ font-size:14px; margin:0; }
+.newcard__price{ font-weight:700; }
+
+/* ====== Reviews / Comentarios ====== */
+.reviews{ background:var(--panel); border-bottom:1px solid var(--border); }
+.reviews h2{ padding:16px 0; margin:0; }
+.reviews__list{
+  display:grid; gap:12px; grid-template-columns: repeat(1,minmax(0,1fr));
+  padding-bottom:16px;
+}
+@media(min-width:860px){ .reviews__list{ grid-template-columns: repeat(3,minmax(0,1fr)); } }
+.rev{
+  background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.rev__who{ font-weight:600; }
+.rev__date{ color:var(--muted); font-size:12px; }
+
 
