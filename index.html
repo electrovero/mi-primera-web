@@ -13,7 +13,7 @@
   <meta property="og:type" content="website">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=4" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -40,39 +40,32 @@
     </div>
   </header>
 
+  <!-- ===== Secciones estilo referencia ===== -->
+
+  <!-- Categorías destacadas -->
+  <section class="cats">
+    <div class="container">
+      <div class="cats__head">
+        <h2>Categorías</h2>
+        <a href="#productsGrid" class="link">Ver más</a>
+      </div>
+      <div id="catsGrid" class="cats__grid"></div>
+    </div>
+  </section>
+
+  <!-- Nuevos productos (fila desplazable) -->
+  <section class="newprods">
+    <div class="container">
+      <div class="newprods__head">
+        <h2>Nuevos productos</h2>
+        <a href="#productsGrid" class="link">Ver más</a>
+      </div>
+      <div id="newRow" class="newprods__row"></div>
+    </div>
+  </section>
+
   <!-- Filtros -->
   <section class="filters">
-    <!-- Categorías destacadas (estilo “mosaico”) -->
-<section class="cats">
-  <div class="container">
-    <div class="cats__head">
-      <h2>Categorías</h2>
-      <a href="#productsGrid" class="link">Ver más</a>
-    </div>
-    <div id="catsGrid" class="cats__grid"></div>
-  </div>
-</section>
-
-<!-- Nuevos productos (fila desplazable) -->
-<section class="newprods">
-  <div class="container">
-    <div class="newprods__head">
-      <h2>Nuevos productos</h2>
-      <a href="#productsGrid" class="link">Ver más</a>
-    </div>
-    <div id="newRow" class="newprods__row"></div>
-  </div>
-</section>
-
-<!-- Comentarios / testimonios -->
-<section class="reviews">
-  <div class="container">
-    <h2>Comentarios</h2>
-    <div id="reviewsList" class="reviews__list"></div>
-    <a class="btn" href="#contacto">Dejar un comentario</a>
-  </div>
-</section>
-
     <div class="container filters__inner">
       <div class="selects">
         <select id="categoryFilter">
@@ -116,6 +109,15 @@
       <div class="trust__item">🚚 Envío a todo el país</div>
       <div class="trust__item">🔒 Compra segura</div>
       <div class="trust__item">💬 Atención por WhatsApp</div>
+    </div>
+  </section>
+
+  <!-- Comentarios / testimonios -->
+  <section class="reviews">
+    <div class="container">
+      <h2>Comentarios</h2>
+      <div id="reviewsList" class="reviews__list"></div>
+      <a class="btn" href="#contacto">Dejar un comentario</a>
     </div>
   </section>
 
@@ -387,9 +389,92 @@
   $("#whatsFloating").setAttribute("href", wlink);
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  // Init
+
+  /* ========= Categorías desde tus PRODUCTS ========= */
+  const CAT_EMOJI = {
+    "Heladeras":"🧊", "Lavarropas":"🧺", "Microondas":"📡", "Aires":"❄️",
+    "TV":"📺", "Cocinas":"🍳", "Pequeños":"⚡", "Freezers":"🧯", "Cuidado personal":"💇"
+  };
+  function getCategories(){
+    const map = new Map();
+    PRODUCTS.forEach(p=>{
+      const c = p.category || "General";
+      map.set(c, (map.get(c)||0)+1);
+    });
+    return [...map.entries()].map(([name,count])=>({name,count,emoji:CAT_EMOJI[name]||"🛒"}));
+  }
+  function renderCats(){
+    const cats = getCategories();
+    const el = document.getElementById("catsGrid");
+    el.innerHTML = cats.map(c=>`
+      <button class="cat" data-cat="${c.name}">
+        <div class="cat__emoji">${c.emoji}</div>
+        <div class="cat__name">${c.name}</div>
+        <div class="cat__count">${c.count} prod.</div>
+      </button>
+    `).join("");
+    el.onclick = (e)=>{
+      const btn = e.target.closest("[data-cat]");
+      if(!btn) return;
+      state.category = btn.dataset.cat;
+      document.getElementById("categoryFilter").value = state.category;
+      render();
+      document.getElementById("productsGrid").scrollIntoView({behavior:"smooth", block:"start"});
+    };
+  }
+
+  /* ========= Nuevos productos (por id más alto) ========= */
+  function getNewProducts(n=10){
+    const sorted = [...PRODUCTS].sort((a,b)=>b.id-a.id);
+    return sorted.slice(0,n);
+  }
+  function renderNew(){
+    const row = document.getElementById("newRow");
+    const list = getNewProducts(10);
+    row.innerHTML = list.map(p=>`
+      <article class="newcard">
+        <img src="${p.img}" alt="${p.name}">
+        <div class="newcard__body">
+          <h4 class="newcard__title">${p.name}</h4>
+          <div class="newcard__price">${money(p.price)}</div>
+          <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
+        </div>
+      </article>
+    `).join("");
+    row.onclick = (e)=>{
+      const btn = e.target.closest("[data-add]");
+      if(!btn) return;
+      const id = Number(btn.dataset.add);
+      const prod = PRODUCTS.find(p=>p.id===id);
+      addToCart(prod);
+    };
+  }
+
+  /* ========= Reviews / Comentarios ========= */
+  const REVIEWS = [
+    { who:"María", date:"Ago 2025", text:"Muy buena atención y buenos precios. Envío rápido." },
+    { who:"Juan",  date:"Ago 2025", text:"Compré una heladera y llegó impecable. Recomendados." },
+    { who:"Sofía", date:"Jul 2025", text:"Me asesoraron por WhatsApp, todo de 10." }
+  ];
+  function renderReviews(){
+    const box = document.getElementById("reviewsList");
+    box.innerHTML = REVIEWS.map(r=>`
+      <div class="rev">
+        <div class="rev__who">${r.who}</div>
+        <div class="rev__date">${r.date}</div>
+        <div class="rev__text">${r.text}</div>
+      </div>
+    `).join("");
+  }
+
+  // ===== Init =====
   persistCart(); drawCart(); render();
+  renderCats();
+  renderNew();
+  renderReviews();
   </script>
 </body>
 </html>
+
+
 
