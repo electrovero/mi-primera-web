@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -71,13 +71,7 @@
       <div class="selects">
         <select id="categoryFilter">
           <option value="all">Todas las categorías</option>
-          <option value="Heladeras">Heladeras</option>
-          <option value="Lavarropas">Lavarropas</option>
-          <option value="Microondas">Microondas</option>
-          <option value="Aires">Aires Acond.</option>
-          <option value="TV">Smart TV</option>
-          <option value="Cocinas">Cocinas</option>
-          <option value="Pequeños">Pequeños</option>
+          <!-- Las demás opciones se agregan solas con JS -->
         </select>
 
         <select id="sortBy">
@@ -194,36 +188,41 @@
   </footer>
 
   <script>
-  /* ================== Datos de productos ================== */
+  /* ================== Datos de productos (EDITÁ A GUSTO) ================== */
   const PRODUCTS = [
-    // ====== CATÁLOGO BASE ======
-    { id: 1,  name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
-    { id: 2,  name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg", tags: ["cuotas","envio"] },
-    { id: 3,  name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
-    { id: 4,  name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] },
-    { id: 5,  name: "Aire Acondicionado Split 3000W Frío/Calor", category: "Aires", price: 799999, img: "./img/aire-split-3000w.jpg", tags: ["envio"] },
-    { id: 6,  name: "Pava Eléctrica Inox 1.7L", category: "Pequeños", price: 45999,  img: "./img/pava-inox-17.jpg", tags: ["oferta"] },
-    { id: 7,  name: "Aspiradora Ciclónica 2000W", category: "Pequeños", price: 119999, img: "./img/aspiradora-2000w.jpg", tags: ["cuotas"] },
-    { id: 8,  name: "Licuadora Oster 600W Jarra Vidrio", category: "Pequeños", price: 79999,  img: "./img/licuadora-oster-600w.jpg", tags: ["envio"] },
-    { id: 9,  name: "Tostadora Eléctrica Philips", category: "Pequeños", price: 55999,  img: "./img/tostadora-philips.jpg", tags: ["oferta"] },
-    { id: 10, name: "Plancha a Vapor Philips 2200W", category: "Pequeños", price: 69999,  img: "./img/plancha-philips-2200w.jpg", tags: ["envio","cuotas"] },
-    { id: 11, name: "Cocina Orbis 56cm Acero", category: "Cocinas", price: 459999, img: "./img/cocina-orbis-56cm.jpg", tags: ["oferta","envio"] },
+    /* === Aires Acondicionados === */
+    { id: 101, name: "Aire Split 3000W Frío/Calor Philco", category: "Aires Acondicionados", price: 799999, img: "./img/aire-philco-3000w.jpg", tags: ["envio","cuotas"] },
+    { id: 102, name: "Aire Split 2500W Inverter BGH", category: "Aires Acondicionados", price: 689999, img: "./img/aire-bgh-2500w.jpg", tags: ["oferta","envio"] },
+    { id: 103, name: "Aire Portátil 3000W Noblex", category: "Aires Acondicionados", price: 599999, img: "./img/aire-portatil-noblex-3000w.jpg", tags: ["envio"] },
 
-    // ====== TVs (tus fotos en /img) ======
-    { id: 20, name: "TV RCA 50\"",         category: "TV", price: 349999, img: "./img/tv-50-rca.jpg",           tags: ["oferta","envio"] },
-    { id: 21, name: "TV Noblex 100\"",     category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg",       tags: ["cuotas","envio"] },
-    { id: 22, name: "TV Noblex 75\"",      category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg",        tags: ["oferta","cuotas"] },
-    { id: 23, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg",   tags: ["envio"] },
-    { id: 24, name: "TV Philips 50\"",     category: "TV", price: 359999, img: "./img/tv-philips-50.jpg",       tags: ["oferta"] },
-    { id: 25, name: "TV Philips 65\"",     category: "TV", price: 459999, img: "./img/tv-philips-65.jpg",       tags: ["cuotas","envio"] },
-    { id: 26, name: "TV Quint 32\"",       category: "TV", price: 159999, img: "./img/tv-quint-32.jpg",         tags: ["envio"] },
-    { id: 27, name: "TV Sharp 50\"",       category: "TV", price: 329999, img: "./img/tv-sharp-50.jpg",         tags: ["oferta"] },
-    { id: 28, name: "TV TCL 43\"",         category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg",           tags: ["envio","cuotas"] },
-    { id: 29, name: "TV Xiaomi 86\"",      category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg",        tags: ["oferta","cuotas","envio"] }
+    /* === Freezer === */
+    { id: 201, name: "Freezer Horizontal 300L Gafa", category: "Freezer", price: 559999, img: "./img/freezer-gafa-300l.jpg", tags: ["envio","cuotas"] },
+    { id: 202, name: "Freezer Vertical 220L Patrick", category: "Freezer", price: 529999, img: "./img/freezer-vertical-patrick-220l.jpg", tags: ["oferta"] },
+    { id: 203, name: "Freezer Horizontal 200L Patrick", category: "Freezer", price: 429999, img: "./img/freezer-horizontal-200l.jpg", tags: ["envio"] },
+
+    /* === Equipos de música === */
+    { id: 301, name: "Torre de Sonido 500W Bluetooth", category: "Equipos de música", price: 249999, img: "./img/torre-sonido-500w.jpg", tags: ["cuotas"] },
+    { id: 302, name: "Minicomponente LG 1500W", category: "Equipos de música", price: 459999, img: "./img/minicomponente-lg-1500w.jpg", tags: ["oferta","envio"] },
+    { id: 303, name: "Barra de Sonido 2.1 con Subwoofer", category: "Equipos de música", price: 199999, img: "./img/barra-sonido-21.jpg", tags: ["envio"] },
+
+    /* === Microondas === */
+    { id: 401, name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
+    { id: 402, name: "Microondas Samsung 30L", category: "Microondas", price: 189999, img: "./img/microondas-samsung-30l.jpg", tags: ["cuotas"] },
+    { id: 403, name: "Microondas Philips 25L Blanco", category: "Microondas", price: 139999, img: "./img/microondas-philips-25l.jpg", tags: ["envio"] },
+
+    /* === Termotanques y hornos eléctricos === */
+    { id: 501, name: "Termotanque Eléctrico 80L Rheem", category: "Termotanques y hornos eléctricos", price: 389999, img: "./img/termotanque-rheem-80l.jpg", tags: ["envio"] },
+    { id: 502, name: "Horno Eléctrico 60L Atma", category: "Termotanques y hornos eléctricos", price: 179999, img: "./img/horno-electrico-atma-60l.jpg", tags: ["oferta","cuotas"] },
+    { id: 503, name: "Horno Eléctrico 45L BGH", category: "Termotanques y hornos eléctricos", price: 149999, img: "./img/horno-electrico-bgh-45l.jpg", tags: ["envio"] },
+
+    /* === Cuidado personal === */
+    { id: 601, name: "Afeitadora Eléctrica Philips Serie 3000", category: "Cuidado personal", price: 79999, img: "./img/afeitadora-philips-s3000.jpg", tags: ["oferta"] },
+    { id: 602, name: "Secador de Pelo 2200W", category: "Cuidado personal", price: 54999, img: "./img/secador-2200w.jpg", tags: ["envio"] },
+    { id: 603, name: "Cortadora de Pelo Wahl", category: "Cuidado personal", price: 62999, img: "./img/cortadora-wahl.jpg", tags: ["cuotas"] }
   ];
 
   /* ================== Config rápida ================== */
-  const WHATSAPP_NUMBER = "5491127631167";
+  const WHATSAPP_NUMBER = "5491127631167"; // tu número en formato internacional sin + ni 00
 
   /* ================== Helpers ================== */
   const $ = (sel) => document.querySelector(sel);
@@ -398,13 +397,12 @@
 
   function getDesc(p){
     const base = {
-      "Heladeras": "Eficiencia y capacidad para tu hogar. Servicio y garantía oficial.",
-      "Lavarropas": "Tecnología inverter, ahorro de energía y múltiples programas.",
-      "Microondas": "Calentá y cociná rápido con funciones grill.",
-      "Aires": "Climatización frío/calor, bajo consumo.",
-      "TV": "Smart TV con apps, alta definición y conectividad.",
-      "Cocinas": "Diseño y potencia para tu cocina.",
-      "Pequeños": "Pequeños electrodomésticos que simplifican tu día."
+      "Aires Acondicionados": "Climatización frío/calor con bajo consumo.",
+      "Freezer": "Gran capacidad de conservación y eficiencia.",
+      "Equipos de música": "Sonido potente con conectividad moderna.",
+      "Microondas": "Calentá y cociná rápido con funciones útiles.",
+      "Termotanques y hornos eléctricos": "Agua caliente y cocción eléctrica eficiente.",
+      "Cuidado personal": "Herramientas para tu rutina diaria."
     };
     return p.desc || base[p.category] || "Producto de calidad con garantía y soporte.";
   }
@@ -445,7 +443,22 @@
     if (prod) showProduct(prod);
   });
 
+  /* ===== Poblar categorías automáticamente ===== */
+  function populateCategories(){
+    const select = document.getElementById("categoryFilter");
+    // borrar opciones anteriores excepto "all"
+    [...select.querySelectorAll('option:not([value="all"])')].forEach(o => o.remove());
+    // categorías únicas ordenadas
+    const cats = [...new Set(PRODUCTS.map(p => p.category))].sort((a,b)=>a.localeCompare(b));
+    cats.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat; opt.textContent = cat;
+      select.appendChild(opt);
+    });
+  }
+
   // Init
+  populateCategories();
   persistCart(); drawCart(); render();
   </script>
 </body>
