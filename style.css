@@ -185,5 +185,33 @@ body.noscroll{ overflow:hidden; }
 }
 .rev__who{ font-weight:600; }
 .rev__date{ color:var(--muted); font-size:12px; }
+  </aside>
+  <div id="backdrop" class="backdrop"></div>
+
+  <!-- === Modal de producto (PEGAR ACÁ) === -->
+  <div id="modalBackdrop" class="backdrop"></div>
+  <div id="productModal" class="modal">
+    <button id="modalClose" class="modal__close" aria-label="Cerrar">✕</button>
+    <div class="modal__content">
+      <img id="modalImg" alt="" class="modal__img">
+      <div class="modal__body">
+        <h3 id="modalTitle" class="modal__title"></h3>
+        <div id="modalPrice" class="modal__price"></div>
+        <p id="modalDesc" class="modal__desc"></p>
+
+        <div class="modal__actions">
+          <button id="modalAdd" class="btn btn--primary">Agregar al carrito</button>
+          <button id="modalGoCart" class="btn btn--ghost">Ver carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- === /Modal de producto === -->
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p>© <span id="year"></span> Nahuel Electrohogar</p>
+
+
 
 
