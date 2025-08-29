@@ -5,17 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nahuel Electrohogar | Tienda de Electrodomésticos</title>
 
-  <!-- SEO / Social -->
+  <!-- SEO básico -->
   <meta name="description" content="Electrodomésticos con envío a todo el país. Heladeras, lavarropas, TV, cocinas y más.">
   <meta property="og:title" content="Nahuel Electrohogar">
   <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
-  <meta property="og:image" content="https://TU-DOMINIO/og-cover.jpg">
   <meta property="og:type" content="website">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Estilos del modal (para no tocar style.css) -->
+  <style>
+    /* ===== Modal de producto ===== */
+    .modal{ position: fixed; inset: 0; z-index: 120; display: none; place-items: center; }
+    .modal.show{ display: grid; }
+    .modal__content{
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      width: min(920px, 96vw); max-height: 92vh; overflow: hidden;
+      display: grid; grid-template-columns: 1fr; gap: 0;
+    }
+    @media(min-width: 860px){ .modal__content{ grid-template-columns: 1.1fr 1fr; } }
+    .modal__img{ width:100%; height:100%; max-height:60vh; object-fit:cover; display:block; background:#111; }
+    .modal__body{ padding:16px; display:flex; flex-direction:column; gap:12px; }
+    .modal__title{ margin:0; font-size:20px; }
+    .modal__price{ font-size:18px; font-weight:700; }
+    .modal__desc{ color: var(--muted); line-height:1.5; }
+    .modal__actions{ display:flex; gap:8px; flex-wrap:wrap; }
+    .modal__close{
+      position:absolute; top:10px; right:10px;
+      background:#0c1426; border:1px solid var(--border); color:var(--text);
+      border-radius:10px; padding:6px 10px; cursor:pointer;
+    }
+    /* backdrop del modal (separado del carrito) */
+    #modalBackdrop{ z-index:110; }
+  </style>
 </head>
 <body>
   <!-- Top bar -->
@@ -39,30 +64,6 @@
       <button id="openCart" class="cartbtn" aria-label="Abrir carrito">🛒<span id="cartCount" class="badge">0</span></button>
     </div>
   </header>
-
-  <!-- ===== Secciones estilo referencia ===== -->
-
-  <!-- Categorías destacadas -->
-  <section class="cats">
-    <div class="container">
-      <div class="cats__head">
-        <h2>Categorías</h2>
-        <a href="#productsGrid" class="link">Ver más</a>
-      </div>
-      <div id="catsGrid" class="cats__grid"></div>
-    </div>
-  </section>
-
-  <!-- Nuevos productos (fila desplazable) -->
-  <section class="newprods">
-    <div class="container">
-      <div class="newprods__head">
-        <h2>Nuevos productos</h2>
-        <a href="#productsGrid" class="link">Ver más</a>
-      </div>
-      <div id="newRow" class="newprods__row"></div>
-    </div>
-  </section>
 
   <!-- Filtros -->
   <section class="filters">
@@ -109,15 +110,6 @@
       <div class="trust__item">🚚 Envío a todo el país</div>
       <div class="trust__item">🔒 Compra segura</div>
       <div class="trust__item">💬 Atención por WhatsApp</div>
-    </div>
-  </section>
-
-  <!-- Comentarios / testimonios -->
-  <section class="reviews">
-    <div class="container">
-      <h2>Comentarios</h2>
-      <div id="reviewsList" class="reviews__list"></div>
-      <a class="btn" href="#contacto">Dejar un comentario</a>
     </div>
   </section>
 
@@ -171,6 +163,25 @@
   </aside>
   <div id="backdrop" class="backdrop"></div>
 
+  <!-- ===== Modal de producto ===== -->
+  <div id="modalBackdrop" class="backdrop"></div>
+  <div id="productModal" class="modal">
+    <button id="modalClose" class="modal__close" aria-label="Cerrar">✕</button>
+    <div class="modal__content">
+      <img id="modalImg" alt="" class="modal__img">
+      <div class="modal__body">
+        <h3 id="modalTitle" class="modal__title"></h3>
+        <div id="modalPrice" class="modal__price"></div>
+        <p id="modalDesc" class="modal__desc"></p>
+        <div class="modal__actions">
+          <button id="modalAdd" class="btn btn--primary">Agregar al carrito</button>
+          <button id="modalGoCart" class="btn btn--ghost">Ver carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ============================ -->
+
   <footer class="footer">
     <div class="container footer__inner">
       <p>© <span id="year"></span> Nahuel Electrohogar</p>
@@ -185,21 +196,31 @@
   <script>
   /* ================== Datos de productos ================== */
   const PRODUCTS = [
-  // TVs con nombres limpios (kebab-case)
-{ id: 20, name: "TV RCA 50\"",         category: "TV", price: 349999, img: "./img/tv-50-rca.jpg",           tags: ["oferta","envio"] },
-{ id: 21, name: "TV Noblex 100\"",     category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg",       tags: ["cuotas","envio"] },
-{ id: 22, name: "TV Noblex 75\"",      category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg",        tags: ["oferta","cuotas"] },
-{ id: 23, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg",   tags: ["envio"] },
-{ id: 24, name: "TV Philips 50\"",     category: "TV", price: 359999, img: "./img/tv-philips-50.jpg",       tags: ["oferta"] },
-{ id: 25, name: "TV Philips 65\"",     category: "TV", price: 459999, img: "./img/tv-philips-65.jpg",       tags: ["cuotas","envio"] },
-{ id: 26, name: "TV Quint 32\"",       category: "TV", price: 159999, img: "./img/tv-quint-32.jpg",         tags: ["envio"] },
-{ id: 27, name: "TV Sharp 50\"",       category: "TV", price: 329999, img: "./img/tv-sharp-50.jpg",         tags: ["oferta"] },
-{ id: 28, name: "TV TCL 43\"",         category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg",           tags: ["envio","cuotas"] },
-{ id: 29, name: "TV Xiaomi 86\"",      category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg",        tags: ["oferta","cuotas","envio"] }
+    // ====== CATÁLOGO BASE ======
+    { id: 1,  name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
+    { id: 2,  name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg", tags: ["cuotas","envio"] },
+    { id: 3,  name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
+    { id: 4,  name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] },
+    { id: 5,  name: "Aire Acondicionado Split 3000W Frío/Calor", category: "Aires", price: 799999, img: "./img/aire-split-3000w.jpg", tags: ["envio"] },
+    { id: 6,  name: "Pava Eléctrica Inox 1.7L", category: "Pequeños", price: 45999,  img: "./img/pava-inox-17.jpg", tags: ["oferta"] },
+    { id: 7,  name: "Aspiradora Ciclónica 2000W", category: "Pequeños", price: 119999, img: "./img/aspiradora-2000w.jpg", tags: ["cuotas"] },
+    { id: 8,  name: "Licuadora Oster 600W Jarra Vidrio", category: "Pequeños", price: 79999,  img: "./img/licuadora-oster-600w.jpg", tags: ["envio"] },
+    { id: 9,  name: "Tostadora Eléctrica Philips", category: "Pequeños", price: 55999,  img: "./img/tostadora-philips.jpg", tags: ["oferta"] },
+    { id: 10, name: "Plancha a Vapor Philips 2200W", category: "Pequeños", price: 69999,  img: "./img/plancha-philips-2200w.jpg", tags: ["envio","cuotas"] },
+    { id: 11, name: "Cocina Orbis 56cm Acero", category: "Cocinas", price: 459999, img: "./img/cocina-orbis-56cm.jpg", tags: ["oferta","envio"] },
 
-];
-
-
+    // ====== TVs (tus fotos en /img) ======
+    { id: 20, name: "TV RCA 50\"",         category: "TV", price: 349999, img: "./img/tv-50-rca.jpg",           tags: ["oferta","envio"] },
+    { id: 21, name: "TV Noblex 100\"",     category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg",       tags: ["cuotas","envio"] },
+    { id: 22, name: "TV Noblex 75\"",      category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg",        tags: ["oferta","cuotas"] },
+    { id: 23, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg",   tags: ["envio"] },
+    { id: 24, name: "TV Philips 50\"",     category: "TV", price: 359999, img: "./img/tv-philips-50.jpg",       tags: ["oferta"] },
+    { id: 25, name: "TV Philips 65\"",     category: "TV", price: 459999, img: "./img/tv-philips-65.jpg",       tags: ["cuotas","envio"] },
+    { id: 26, name: "TV Quint 32\"",       category: "TV", price: 159999, img: "./img/tv-quint-32.jpg",         tags: ["envio"] },
+    { id: 27, name: "TV Sharp 50\"",       category: "TV", price: 329999, img: "./img/tv-sharp-50.jpg",         tags: ["oferta"] },
+    { id: 28, name: "TV TCL 43\"",         category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg",           tags: ["envio","cuotas"] },
+    { id: 29, name: "TV Xiaomi 86\"",      category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg",        tags: ["oferta","cuotas","envio"] }
+  ];
 
   /* ================== Config rápida ================== */
   const WHATSAPP_NUMBER = "5491127631167";
@@ -221,12 +242,15 @@
     const chipBadges = p.tags.map(t => `<span class="badge badge--${t}">${t}</span>`).join("");
     return `
       <article class="card">
-        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
+        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy" data-view="${p.id}">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
           <div class="price">${money(p.price)}</div>
           <div class="badges">${chipBadges}</div>
-          <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
+            <button class="btn btn--ghost" data-view="${p.id}">Ver detalle</button>
+          </div>
         </div>
       </article>
     `;
@@ -316,7 +340,7 @@
     persistCart();
   }
 
-  // Listener único para botones del carrito
+  // Delegación de eventos del carrito
   cartItems.onclick = (e) => {
     const t = e.target;
     if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
@@ -324,24 +348,8 @@
     if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
   };
 
-  // Abrir/cerrar carrito con bloqueo de scroll
-  function openCart(){
-    cartDrawer.classList.add("open");
-    backdrop.classList.add("show");
-    document.body.classList.add("noscroll");
-  }
-  function closeCart(){
-    cartDrawer.classList.remove("open");
-    backdrop.classList.remove("show");
-    document.body.classList.remove("noscroll");
-  }
-
-  // Cerrar con tecla ESC
-  document.addEventListener("keydown", (e)=>{
-    if (e.key === "Escape" && cartDrawer.classList.contains("open")) {
-      closeCart();
-    }
-  });
+  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); document.body.classList.add("noscroll"); }
+  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); document.body.classList.remove("noscroll"); }
 
   // Checkout WhatsApp
   function buildWhatsappLink(){
@@ -357,18 +365,13 @@
     if(!url) return alert("El carrito está vacío.");
     window.open(url, "_blank");
   });
-  $("#clearCart").addEventListener("click", ()=>{
-    state.cart = []; persistCart(); drawCart();
-  });
+  $("#clearCart").addEventListener("click", ()=>{ state.cart = []; persistCart(); drawCart(); });
   $("#openCart").addEventListener("click", openCart);
   $("#closeCart").addEventListener("click", closeCart);
   $("#backdrop").addEventListener("click", closeCart);
 
   /* ================== Búsqueda / Filtros ================== */
-  $("#searchBtn").addEventListener("click", ()=>{
-    state.q = $("#searchInput").value || "";
-    render();
-  });
+  $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value || ""; render(); });
   $("#searchInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ state.q = e.target.value; render(); }});
   $("#categoryFilter").addEventListener("change", (e)=>{ state.category = e.target.value; render(); });
   $("#sortBy").addEventListener("change", (e)=>{ state.sort = e.target.value; render(); });
@@ -381,107 +384,69 @@
       render();
     });
   });
-  $("#clearChips").addEventListener("click", ()=>{
-    state.chips.clear();
-    $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active"));
-    render();
-  });
+  $("#clearChips").addEventListener("click", ()=>{ state.chips.clear(); $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active")); render(); });
 
   // WhatsApp flotante y año
   const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
   $("#whatsFloating").setAttribute("href", wlink);
   document.getElementById("year").textContent = new Date().getFullYear();
 
+  /* ===== Modal de producto (JS) ===== */
+  let MODAL_PROD = null;
+  const modal = document.getElementById("productModal");
+  const modalBackdrop = document.getElementById("modalBackdrop");
 
-  /* ========= Categorías desde tus PRODUCTS ========= */
-  const CAT_EMOJI = {
-    "Heladeras":"🧊", "Lavarropas":"🧺", "Microondas":"📡", "Aires":"❄️",
-    "TV":"📺", "Cocinas":"🍳", "Pequeños":"⚡", "Freezers":"🧯", "Cuidado personal":"💇"
-  };
-  function getCategories(){
-    const map = new Map();
-    PRODUCTS.forEach(p=>{
-      const c = p.category || "General";
-      map.set(c, (map.get(c)||0)+1);
-    });
-    return [...map.entries()].map(([name,count])=>({name,count,emoji:CAT_EMOJI[name]||"🛒"}));
-  }
-  function renderCats(){
-    const cats = getCategories();
-    const el = document.getElementById("catsGrid");
-    el.innerHTML = cats.map(c=>`
-      <button class="cat" data-cat="${c.name}">
-        <div class="cat__emoji">${c.emoji}</div>
-        <div class="cat__name">${c.name}</div>
-        <div class="cat__count">${c.count} prod.</div>
-      </button>
-    `).join("");
-    el.onclick = (e)=>{
-      const btn = e.target.closest("[data-cat]");
-      if(!btn) return;
-      state.category = btn.dataset.cat;
-      document.getElementById("categoryFilter").value = state.category;
-      render();
-      document.getElementById("productsGrid").scrollIntoView({behavior:"smooth", block:"start"});
+  function getDesc(p){
+    const base = {
+      "Heladeras": "Eficiencia y capacidad para tu hogar. Servicio y garantía oficial.",
+      "Lavarropas": "Tecnología inverter, ahorro de energía y múltiples programas.",
+      "Microondas": "Calentá y cociná rápido con funciones grill.",
+      "Aires": "Climatización frío/calor, bajo consumo.",
+      "TV": "Smart TV con apps, alta definición y conectividad.",
+      "Cocinas": "Diseño y potencia para tu cocina.",
+      "Pequeños": "Pequeños electrodomésticos que simplifican tu día."
     };
+    return p.desc || base[p.category] || "Producto de calidad con garantía y soporte.";
   }
 
-  /* ========= Nuevos productos (por id más alto) ========= */
-  function getNewProducts(n=10){
-    const sorted = [...PRODUCTS].sort((a,b)=>b.id-a.id);
-    return sorted.slice(0,n);
-  }
-  function renderNew(){
-    const row = document.getElementById("newRow");
-    const list = getNewProducts(10);
-    row.innerHTML = list.map(p=>`
-      <article class="newcard">
-        <img src="${p.img}" alt="${p.name}">
-        <div class="newcard__body">
-          <h4 class="newcard__title">${p.name}</h4>
-          <div class="newcard__price">${money(p.price)}</div>
-          <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
-        </div>
-      </article>
-    `).join("");
-    row.onclick = (e)=>{
-      const btn = e.target.closest("[data-add]");
-      if(!btn) return;
-      const id = Number(btn.dataset.add);
-      const prod = PRODUCTS.find(p=>p.id===id);
-      addToCart(prod);
-    };
+  function showProduct(p){
+    MODAL_PROD = p;
+    document.getElementById("modalImg").src = p.img;
+    document.getElementById("modalImg").alt = p.name;
+    document.getElementById("modalTitle").textContent = p.name;
+    document.getElementById("modalPrice").textContent = money(p.price);
+    document.getElementById("modalDesc").textContent = getDesc(p);
+
+    modal.classList.add("show");
+    modalBackdrop.classList.add("show");
+    document.body.classList.add("noscroll");
   }
 
-  /* ========= Reviews / Comentarios ========= */
-  const REVIEWS = [
-    { who:"María", date:"Ago 2025", text:"Muy buena atención y buenos precios. Envío rápido." },
-    { who:"Juan",  date:"Ago 2025", text:"Compré una heladera y llegó impecable. Recomendados." },
-    { who:"Sofía", date:"Jul 2025", text:"Me asesoraron por WhatsApp, todo de 10." }
-  ];
-  function renderReviews(){
-    const box = document.getElementById("reviewsList");
-    box.innerHTML = REVIEWS.map(r=>`
-      <div class="rev">
-        <div class="rev__who">${r.who}</div>
-        <div class="rev__date">${r.date}</div>
-        <div class="rev__text">${r.text}</div>
-      </div>
-    `).join("");
+  function hideProduct(){
+    modal.classList.remove("show");
+    modalBackdrop.classList.remove("show");
+    document.body.classList.remove("noscroll");
+    MODAL_PROD = null;
   }
 
-  // ===== Init =====
+  document.getElementById("modalClose").addEventListener("click", hideProduct);
+  modalBackdrop.addEventListener("click", hideProduct);
+  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && modal.classList.contains("show")) hideProduct(); });
+
+  document.getElementById("modalAdd").addEventListener("click", ()=>{ if(!MODAL_PROD) return; addToCart(MODAL_PROD); });
+  document.getElementById("modalGoCart").addEventListener("click", ()=>{ hideProduct(); openCart(); });
+
+  // Abrir modal al hacer click en "Ver detalle" o en la imagen
+  grid.addEventListener("click", (e)=>{
+    const btn = e.target.closest("[data-view]");
+    if(!btn) return;
+    const id = Number(btn.getAttribute("data-view"));
+    const prod = PRODUCTS.find(p => p.id === id);
+    if (prod) showProduct(prod);
+  });
+
+  // Init
   persistCart(); drawCart(); render();
-  renderCats();
-  renderNew();
-  renderReviews();
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
