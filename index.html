@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=7" />
+  <link rel="stylesheet" href="style.css?v=8" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -125,10 +125,21 @@
         <span>Subtotal</span>
         <strong id="cartSubtotal">$ 0</strong>
       </div>
-      <div class="cart__row">
-        <span>Envío</span>
-        <span>Se coordina</span>
+
+      <!-- Cupón (mini UI discreta) -->
+      <div class="cart__row" style="justify-content:flex-start; gap:8px;">
+        <button id="toggleCoupon" class="link" type="button" aria-expanded="false">¿Tenés cupón?</button>
       </div>
+      <div id="couponBox" style="display:none; gap:6px; margin:6px 0 2px 0;">
+        <input id="couponInput" type="text" placeholder="Ingresá tu cupón" style="flex:1; background:#0c1426; border:1px solid var(--border); color:var(--text); padding:8px; border-radius:8px; outline:none;">
+        <button id="applyCoupon" class="btn btn--ghost" type="button">Aplicar</button>
+      </div>
+      <div id="couponInfo" class="cart__row" style="display:none;">
+        <span id="couponLabel">Cupón aplicado</span>
+        <strong id="couponValue">- $ 0</strong>
+      </div>
+      <!-- /Cupón -->
+
       <div class="cart__total">
         <span>Total</span>
         <strong id="cartTotal">$ 0</strong>
@@ -151,9 +162,9 @@
   </footer>
 
   <script>
-  /* ================== Datos de productos ================== */
+  /* ================== Productos ================== */
   const PRODUCTS = [
-    /* ====== Catálogo propio ====== */
+    /* Catálogo propio */
     { id: 1, name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
     { id: 2, name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg", tags: ["cuotas","envio"] },
     { id: 3, name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
@@ -166,7 +177,7 @@
     { id: 10, name: "Plancha a Vapor Philips 2200W", category: "Pequeños", price: 69999, img: "./img/plancha-philips-2200w.jpg", tags: ["envio","cuotas"] },
     { id: 11, name: "Cocina Orbis 56cm Acero", category: "Cocinas", price: 459999, img: "./img/cocina-orbis-56cm.jpg", tags: ["oferta","envio"] },
 
-    /* ====== TVs propias ====== */
+    /* TVs propias */
     { id: 20, name: "TV RCA 50\"", category: "TV", price: 349999, img: "./img/tv-50-rca.jpg", tags: ["oferta","envio"] },
     { id: 21, name: "TV Noblex 100\"", category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg", tags: ["cuotas","envio"] },
     { id: 22, name: "TV Noblex 75\"", category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg", tags: ["oferta","cuotas"] },
@@ -178,7 +189,7 @@
     { id: 28, name: "TV TCL 43\"", category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg", tags: ["envio","cuotas"] },
     { id: 29, name: "TV Xiaomi 86\"", category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg", tags: ["oferta","cuotas","envio"] },
 
-    /* ====== Nuevos de MegaElectro (hotlink) ====== */
+    /* MegaElectro (hotlink) */
     { id: 101, name: "Silla Gamer Star Vision sin Luz", category: "Gaming", price: 115000, img: "https://megaelectro.com.ar/storage/products/G80ApXVt8gQON9L23k7vQ1T92qG3Hq4tP3n48yZq.jpg", tags: ["oferta"] },
     { id: 102, name: "Plancha Liliana Secca Alizza RPS900", category: "Cuidado Personal", price: 25000, img: "https://megaelectro.com.ar/storage/products/JGZk9z4lkQsdl3oIhZ4cFZLjN6f2Z1u1pD8x90sM.jpg", tags: ["envio"] },
     { id: 103, name: "Balanza Personal de Baño Azana", category: "Cuidado Personal", price: 10500, img: "https://megaelectro.com.ar/storage/products/Wx9fTt8KkQqjJ1m23NzQbqZ8vQxqk20cL8w9f8vX.jpg", tags: ["oferta"] },
@@ -189,22 +200,49 @@
     { id: 108, name: "Aspiradora Yelmo AS-3210 1100W con Bolsa y Accesorios 2.5L", category: "Pequeños", price: 52900, img: "https://megaelectro.com.ar/storage/products/Zr8pF1nKqWl5mC7hV2qX9tNfJ4gO7pLxKk2sT6yQ.jpg", tags: ["envio"] }
   ];
 
+  /* ================== Cupones ================== */
+  // AIRESPLIT10: 10% SOLO categoría "Aires" (una vez por cliente)
+  // 10 cupones globales 10% (una sola vez por cliente)
+  const COUPONS = {
+    "AIRESPLIT10": { type: "category", category: "Aires", percent: 0.10 },
+    "MEGA10A": { type: "global", percent: 0.10 },
+    "MEGA10B": { type: "global", percent: 0.10 },
+    "MEGA10C": { type: "global", percent: 0.10 },
+    "MEGA10D": { type: "global", percent: 0.10 },
+    "MEGA10E": { type: "global", percent: 0.10 },
+    "MEGA10F": { type: "global", percent: 0.10 },
+    "MEGA10G": { type: "global", percent: 0.10 },
+    "MEGA10H": { type: "global", percent: 0.10 },
+    "MEGA10I": { type: "global", percent: 0.10 },
+    "MEGA10J": { type: "global", percent: 0.10 }
+  };
+
+  // Helpers para marcar como usado por cliente (localStorage)
+  const isCouponRedeemed = (code) => localStorage.getItem("coupon_redeemed_" + code) === "1";
+  const redeemCoupon = (code) => localStorage.setItem("coupon_redeemed_" + code, "1");
+
   /* ================== Config rápida ================== */
   const WHATSAPP_NUMBER = "5491127631167";
 
-  /* ================== Helpers ================== */
+  /* ================== Helpers generales ================== */
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
   const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
   /* ================== Estado/Render ================== */
   const grid = $("#productsGrid");
-  let state = { q: "", category: "all", sort: "relevancia", chips: new Set(), cart: JSON.parse(localStorage.getItem("cart") || "[]") };
+  let state = {
+    q: "", category: "all", sort: "relevancia",
+    chips: new Set(),
+    cart: JSON.parse(localStorage.getItem("cart") || "[]"),
+    couponCode: null,       // string mayúsculas
+    couponDiscount: 0,      // monto descuento aplicado
+  };
 
   function productCard(p){
     const chipBadges = p.tags.map(t => `<span class="badge badge--${t}">${t}</span>`).join("");
     return `
-      <article class="card">
+      <article class="card" data-category="${p.category}">
         <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
@@ -252,9 +290,17 @@
   const cartDrawer = $("#cartDrawer");
   const backdrop = $("#backdrop");
 
+  const toggleCouponBtn = $("#toggleCoupon");
+  const couponBox = $("#couponBox");
+  const couponInput = $("#couponInput");
+  const applyCouponBtn = $("#applyCoupon");
+  const couponInfo = $("#couponInfo");
+  const couponLabel = $("#couponLabel");
+  const couponValue = $("#couponValue");
+
   function addToCart(prod){
     const found = state.cart.find(i=>i.id===prod.id);
-    if (found) found.qty += 1; else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+    if (found) found.qty += 1; else state.cart.push({ id: prod.id, name: prod.name, category: prod.category, price: prod.price, qty: 1 });
     persistCart(); openCart(); drawCart();
   }
   function removeFromCart(id){
@@ -271,11 +317,79 @@
     localStorage.setItem("cart", JSON.stringify(state.cart));
     cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
   }
+
+  function calcSubtotal(){
+    return state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
+  }
+
+  // Lógica de cupones
+  function canApplyCategoryCoupon(code, coupon){
+    if (coupon.type !== "category") return true;
+    // Debe haber al menos 1 ítem de esa categoría en el carrito
+    return state.cart.some(i => i.category === coupon.category);
+  }
+
+  function computeCouponDiscount(coupon){
+    const subtotal = calcSubtotal();
+    if (coupon.type === "global"){
+      return Math.round(subtotal * coupon.percent);
+    } else if (coupon.type === "category"){
+      const catSum = state.cart
+        .filter(i => i.category === coupon.category)
+        .reduce((a,b)=> a + b.price*b.qty, 0);
+      return Math.round(catSum * coupon.percent);
+    }
+    return 0;
+  }
+
+  function applyCouponCode(rawCode){
+    const code = (rawCode || "").trim().toUpperCase();
+    if (!code) return alert("Ingresá un cupón válido.");
+    const coupon = COUPONS[code];
+    if (!coupon) return alert("Cupón inválido.");
+    if (isCouponRedeemed(code)) return alert("Este cupón ya fue utilizado.");
+
+    if (!canApplyCategoryCoupon(code, coupon)){
+      return alert(`El cupón aplica solo a la categoría ${coupon.category}. Agregá un producto de esa categoría al carrito.`);
+    }
+
+    const discount = computeCouponDiscount(coupon);
+    if (discount <= 0) return alert("No hay monto elegible para este cupón.");
+
+    // Fijar estado: aplicamos y bloqueamos
+    state.couponCode = code;
+    state.couponDiscount = discount;
+    redeemCoupon(code); // 🔒 marca como usado para este cliente
+    updateTotalsUI();
+    couponInfo.style.display = "flex";
+    couponLabel.textContent = `Cupón aplicado (${code})`;
+    couponValue.textContent = `- ${money(discount)}`;
+    couponBox.style.display = "none";
+    toggleCouponBtn.setAttribute("aria-expanded", "false");
+    alert("¡Cupón aplicado!");
+  }
+
+  function updateTotalsUI(){
+    const subtotal = calcSubtotal();
+    cartSubtotal.textContent = money(subtotal);
+    const discount = state.couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
+    cartTotal.textContent = money(total);
+    if (state.couponCode){
+      couponInfo.style.display = "flex";
+      couponLabel.textContent = `Cupón aplicado (${state.couponCode})`;
+      couponValue.textContent = `- ${money(discount)}`;
+    } else {
+      couponInfo.style.display = "none";
+    }
+  }
+
   function drawCart(){
     if(!state.cart.length){
       cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
-      cartSubtotal.textContent = money(0);
-      cartTotal.textContent = money(0);
+      state.couponCode = null;
+      state.couponDiscount = 0;
+      updateTotalsUI();
       persistCart();
       return;
     }
@@ -294,9 +408,18 @@
       </div>
     `).join("");
 
-    const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
-    cartSubtotal.textContent = money(sub);
-    cartTotal.textContent = money(sub);
+    // Recalcular descuento si hay cupón aplicado (por si cambió el carrito)
+    if (state.couponCode){
+      const coupon = COUPONS[state.couponCode];
+      if (coupon){
+        state.couponDiscount = computeCouponDiscount(coupon);
+      } else {
+        state.couponCode = null;
+        state.couponDiscount = 0;
+      }
+    }
+
+    updateTotalsUI();
     persistCart();
 
     // Delegación: botones +/−/Quitar
@@ -311,15 +434,19 @@
   function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); document.body.classList.add("noscroll"); }
   function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); document.body.classList.remove("noscroll"); }
 
-  // Checkout WhatsApp
+  // WhatsApp checkout
   function buildWhatsappLink(){
     if(!state.cart.length) return null;
     const lines = state.cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
-    const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
-    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
+    const subtotal = calcSubtotal();
+    const discount = state.couponDiscount || 0;
+    const total = Math.max(0, subtotal - discount);
+    const couponLine = state.couponCode ? `%0ACupón: ${state.couponCode} (−${money(discount)})` : "";
+    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ASubtotal: ${money(subtotal)}${couponLine}%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   }
 
+  // Eventos carrito
   $("#checkoutBtn").addEventListener("click", ()=>{
     const url = buildWhatsappLink();
     if(!url) return alert("El carrito está vacío.");
@@ -329,6 +456,16 @@
   $("#openCart").addEventListener("click", openCart);
   $("#closeCart").addEventListener("click", closeCart);
   $("#backdrop").addEventListener("click", closeCart);
+
+  // Cupón UI discreta
+  toggleCouponBtn.addEventListener("click", ()=>{
+    const open = couponBox.style.display === "flex";
+    couponBox.style.display = open ? "none" : "flex";
+    toggleCouponBtn.setAttribute("aria-expanded", String(!open));
+    if (!open) couponInput.focus();
+  });
+  applyCouponBtn.addEventListener("click", ()=> applyCouponCode(couponInput.value));
+  couponInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter") applyCouponCode(couponInput.value); });
 
   /* ================== Búsqueda / Filtros ================== */
   $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value || ""; render(); });
