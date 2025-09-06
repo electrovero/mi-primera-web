@@ -12,11 +12,11 @@
   <meta property="og:type" content="website">
 
   <!-- Estilos (usá tu style.css existente) -->
-  <link rel="stylesheet" href="style.css?v=coupon-manual-1" />
+  <link rel="stylesheet" href="style.css?v=coupon-demo" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Estilos mínimos para el modal (si tu CSS ya lo tiene, podés quitar este bloque) -->
+  <!-- Estilos mínimos del modal (si ya están en tu CSS, podés quitar este bloque) -->
   <style>
     .modal{ position: fixed; inset: 0; z-index: 120; display: none; place-items: center; }
     .modal.show{ display: grid; }
@@ -223,6 +223,10 @@
 
   /* ================== Config rápida ================== */
   const WHATSAPP_NUMBER = "5491127631167"; // tu número sin + ni 00
+
+  /* ================== DEMO de cupón aplicado al cargar ================== */
+  const DEMO = true;                  // ← PONÉ FALSE para desactivar la demo
+  const DEMO_COUPON_CODE = "AHORRO10A";
 
   /* ================== Helpers ================== */
   const $ = (sel) => document.querySelector(sel);
@@ -540,9 +544,20 @@
     });
   }
 
+  /* ===== DEMO: Autocompletar y aplicar cupón al cargar ===== */
+  function demoApplyCoupon(){
+    if(!DEMO) return;
+    const code = DEMO_COUPON_CODE;
+    if(!COUPONS[code] || isExpired(COUPONS[code].expires)) return;
+    const input = document.getElementById("couponInput");
+    input.value = code;
+    document.getElementById("applyCouponBtn").click(); // simula click para mostrar descuento
+  }
+
   // Init
   populateCategories();
   persistCart(); drawCart(); render();
+  demoApplyCoupon(); // ← aplica el cupón en el resumen (demo)
   </script>
 </body>
 </html>
