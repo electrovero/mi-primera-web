@@ -10,7 +10,7 @@
   <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
   <meta property="og:type" content="website">
 
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=11" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -35,7 +35,7 @@
     </div>
   </header>
 
-  <!-- Filtros -->
+  <!-- Filtros (opcional) -->
   <section class="filters">
     <div class="container filters__inner">
       <div class="selects">
@@ -51,15 +51,14 @@
         </select>
         <select id="sortBy">
           <option value="relevancia">Ordenar por: Relevancia</option>
-          <option value="precio-asc">Precio: menor a mayor</option>
-          <option value="precio-desc">Precio: mayor a menor</option>
+          <option value="precio-asc">Cuota: menor a mayor</option>
+          <option value="precio-desc">Cuota: mayor a menor</option>
           <option value="nombre-asc">Nombre A→Z</option>
         </select>
       </div>
       <div class="chips" id="promoChips">
         <button class="chip" data-chip="envio">🚚 Envío gratis</button>
-        <button class="chip" data-chip="cuotas">💳 6 cuotas</button>
-        <button class="chip" data-chip="oferta">🔥 Oferta</button>
+        <button class="chip" data-chip="cuotas">💳 4 cuotas</button>
         <button id="clearChips" class="link">Limpiar</button>
       </div>
     </div>
@@ -79,9 +78,7 @@
     </div>
     <div id="cartItems" class="cart__items"></div>
     <div class="cart__footer">
-      <div class="cart__row"><span>Subtotal</span><strong id="cartSubtotal">$ 0</strong></div>
-      <div class="cart__row"><span>Envío</span><span>Se coordina</span></div>
-      <div class="cart__total"><span>Total</span><strong id="cartTotal">$ 0</strong></div>
+      <div class="cart__row"><span>Total (4 cuotas)</span><strong id="cartTotal">$ 0</strong></div>
       <input id="couponInput" type="text" placeholder="Ingresar cupón" style="padding:8px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;">
       <button id="applyCoupon" class="btn btn--ghost">Aplicar cupón</button>
       <button id="checkoutBtn" class="btn btn--primary">Finalizar compra por WhatsApp</button>
@@ -99,15 +96,15 @@
   <script>
   /* ================== Datos de productos ================== */
   const PRODUCTS = [
-    { id: 1, name: "Heladera Samsung 360L", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg" },
-    { id: 2, name: "Lavarropas LG 8kg Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg" },
-    { id: 3, name: "Microondas BGH 28L Grill", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg" },
-    { id: 4, name: "Aire Acond. Split 3000W", category: "Aires", price: 250000*4, img: "./img/aire-split-3000w.jpg" },
-    { id: 5, name: "Smart TV LG 55\"", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg" },
-    { id: 6, name: "Pava Eléctrica Inox", category: "Pequeños", price: 45999, img: "./img/pava-inox-17.jpg" },
-    { id: 7, name: "Cocina Orbis 56cm Acero", category: "Cocinas", price: 459999, img: "./img/cocina-orbis-56cm.jpg" },
-    { id: 8, name: "Plancha Philips 2200W", category: "Pequeños", price: 69999, img: "./img/plancha-philips-2200w.jpg" },
-    { id: 9, name: "TV Xiaomi 86\"", category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg" }
+    { id: 1, name: "Heladera Samsung 360L",           category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg" },
+    { id: 2, name: "Lavarropas LG 8kg Inverter",      category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg" },
+    { id: 3, name: "Microondas BGH 28L Grill",        category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg" },
+    { id: 4, name: "Aire Acond. Split 3000W",         category: "Aires",      price: 999999, img: "./img/aire-split-3000w.jpg" },
+    { id: 5, name: "Smart TV LG 55\"",                category: "TV",         price: 679999, img: "./img/tv-lg-55-4k.jpg" },
+    { id: 6, name: "Pava Eléctrica Inox",             category: "Pequeños",   price: 45999,  img: "./img/pava-inox-17.jpg" },
+    { id: 7, name: "Cocina Orbis 56cm Acero",         category: "Cocinas",    price: 459999, img: "./img/cocina-orbis-56cm.jpg" },
+    { id: 8, name: "Plancha Philips 2200W",           category: "Pequeños",   price: 69999,  img: "./img/plancha-philips-2200w.jpg" },
+    { id: 9, name: "TV Xiaomi 86\"",                  category: "TV",         price: 899999, img: "./img/tv-xiaomi-86.jpg" }
   ];
 
   /* ================== Config rápida ================== */
@@ -116,63 +113,143 @@
   /* ================== Estado ================== */
   let state = {
     cart: JSON.parse(localStorage.getItem("cart") || "[]"),
-    coupon: null
+    coupon: null,
+    q: "", category: "all", sort: "relevancia", chips: new Set()
   };
 
   /* ================== Helpers ================== */
   const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
   const money = (n) => n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
+  function imgFallback(e){
+    e.target.src = "https://via.placeholder.com/600x400?text=Imagen+no+disponible";
+    e.target.alt = "Imagen no disponible";
+  }
 
-  /* ================== Render ================== */
-  function renderProducts(){
-    $("#productsGrid").innerHTML = PRODUCTS.map(p=>`
+  // Calcular cuota (por producto)
+  // Regla general: 4 cuotas = (precio × 2 × 1.10) / 4
+  // Aire Split: $250.000 por cuota; con cupón AIRESPLIT10: $240.000 por cuota
+  function cuotaPorProducto(p){
+    const isAire = p.category === "Aires" || p.name.toLowerCase().includes("aire acond");
+    if (isAire){
+      return (state.coupon === "AIRESPLIT10") ? 240000 : 250000;
+    }
+    return Math.round((p.price * 2 * 1.10) / 4);
+  }
+
+  /* ================== Render productos ================== */
+  function productCard(p){
+    const cuota = cuotaPorProducto(p);
+    return `
       <article class="card">
-        <img src="${p.img}" alt="${p.name}" class="card-img">
+        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy" onerror="imgFallback(event)">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
-          <div class="price">4 cuotas de ${money(Math.round((p.price*1.1)/4))}</div>
+          <div class="price">4 cuotas de ${money(cuota)}</div>
           <button class="btn btn--primary" onclick="addToCart(${p.id})">Agregar</button>
         </div>
       </article>
-    `).join("");
+    `;
   }
 
-  /* ================== Carrito ================== */
-  function persistCart(){ localStorage.setItem("cart",JSON.stringify(state.cart)); }
-  function addToCart(id){ const prod=PRODUCTS.find(p=>p.id===id); const f=state.cart.find(i=>i.id===id); if(f) f.qty++; else state.cart.push({...prod,qty:1}); persistCart(); drawCart(); openCart(); }
+  function applyFilters(list){
+    let res = [...list];
+    if (state.q.trim()){
+      const q = state.q.toLowerCase();
+      res = res.filter(p => (p.name + " " + (p.category||"")).toLowerCase().includes(q));
+    }
+    if (state.category !== "all") res = res.filter(p => p.category === state.category);
+    // (chips de demo: no filtran nada específico)
+    switch(state.sort){
+      case "precio-asc":  res.sort((a,b)=>cuotaPorProducto(a)-cuotaPorProducto(b)); break;
+      case "precio-desc": res.sort((a,b)=>cuotaPorProducto(b)-cuotaPorProducto(a)); break;
+      case "nombre-asc":  res.sort((a,b)=>a.name.localeCompare(b.name)); break;
+    }
+    return res;
+  }
+
+  function renderProducts(){
+    // Verificación rápida del catálogo
+    try {
+      if (!Array.isArray(PRODUCTS)) throw new Error("PRODUCTS no es un array");
+      console.log(`✅ Catálogo OK: ${PRODUCTS.length} productos`);
+    } catch (e) {
+      console.error("❌ Error en PRODUCTS:", e);
+    }
+
+    const list = applyFilters(PRODUCTS);
+    $("#productsGrid").innerHTML =
+      list.map(productCard).join("") ||
+      `<p class="muted">No se encontraron productos.</p>`;
+  }
+
+  /* ================== Carrito (en 4 cuotas) ================== */
+  function persistCart(){ localStorage.setItem("cart",JSON.stringify(state.cart)); $("#cartCount").textContent = state.cart.reduce((a,b)=>a+b.qty,0); }
+  function addToCart(id){ const prod=PRODUCTS.find(p=>p.id===id); const f=state.cart.find(i=>i.id===id); if(f) f.qty++; else state.cart.push({id:prod.id, name:prod.name, qty:1}); persistCart(); drawCart(); openCart(); }
   function removeFromCart(id){ state.cart=state.cart.filter(i=>i.id!==id); persistCart(); drawCart(); }
   function changeQty(id,d){ const it=state.cart.find(i=>i.id===id); if(!it) return; it.qty=Math.max(1,it.qty+d); persistCart(); drawCart(); }
-  function subtotal(){ return state.cart.reduce((a,b)=>a+b.price*b.qty,0); }
+
+  function totalEnCuotas(){
+    // Suma de (cuotaPorProducto * cantidad)
+    return state.cart.reduce((acc, i)=>{
+      const p = PRODUCTS.find(x=>x.id===i.id);
+      if(!p) return acc;
+      return acc + cuotaPorProducto(p) * i.qty;
+    }, 0);
+  }
 
   function drawCart(){
-    $("#cartItems").innerHTML = state.cart.length? state.cart.map(i=>`
-      <div class="cartline">
-        <div class="cartline__info"><strong>${i.name}</strong><span>${money(i.price)}</span></div>
-        <div class="cartline__qty">
-          <button onclick="changeQty(${i.id},-1)">-</button><span>${i.qty}</span><button onclick="changeQty(${i.id},1)">+</button>
-          <button onclick="removeFromCart(${i.id})" class="link danger">Quitar</button>
-        </div>
-      </div>`).join("") : `<p>Tu carrito está vacío.</p>`;
-    let total=subtotal();
-    if(state.coupon==="AIRESPLIT10"){ const air=state.cart.find(i=>i.name.includes("Aire")); if(air){ total -= 40000; }}
-    $("#cartSubtotal").textContent=money(total);
-    $("#cartTotal").textContent=money(total);
+    if(!state.cart.length){
+      $("#cartItems").innerHTML = `<p class="muted">Carrito vacío</p>`;
+      $("#cartTotal").textContent = money(0);
+      return;
+    }
+    $("#cartItems").innerHTML = state.cart.map(i=>{
+      const p = PRODUCTS.find(x=>x.id===i.id);
+      const cuota = p ? cuotaPorProducto(p) : 0;
+      return `
+        <div class="cartline">
+          <div class="cartline__info">
+            <strong>${i.name}</strong>
+            <span>4 cuotas de ${money(cuota)}</span>
+          </div>
+          <div class="cartline__qty">
+            <button onclick="changeQty(${i.id},-1)" class="btn btn--ghost">−</button>
+            <span>${i.qty}</span>
+            <button onclick="changeQty(${i.id},1)" class="btn btn--ghost">+</button>
+            <button onclick="removeFromCart(${i.id})" class="btn btn--danger">Quitar</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    const total = totalEnCuotas();
+    $("#cartTotal").textContent = money(total);
   }
 
   /* ================== Cupón ================== */
   $("#applyCoupon").addEventListener("click",()=>{
     const code=$("#couponInput").value.trim().toUpperCase();
-    if(code==="AIRESPLIT10"){ state.coupon="AIRESPLIT10"; alert("Cupón aplicado: Aire Split a $240.000 x4"); }
-    else alert("Cupón inválido");
+    if(!code) return alert("Ingresá un cupón");
+    if(code==="AIRESPLIT10"){
+      state.coupon="AIRESPLIT10";
+      alert("Cupón aplicado: Aire Split a $240.000 por cuota");
+    } else {
+      alert("Cupón inválido");
+    }
     drawCart();
   });
 
   /* ================== WhatsApp ================== */
   $("#checkoutBtn").addEventListener("click",()=>{
     if(!state.cart.length) return alert("Carrito vacío");
-    const lines=state.cart.map(i=>`• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
-    const total=$("#cartTotal").textContent;
-    const msg=`Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal: ${total}`;
+    const lines = state.cart.map(i=>{
+      const p = PRODUCTS.find(x=>x.id===i.id);
+      const cuota = p ? cuotaPorProducto(p) : 0;
+      return `• ${i.name} x${i.qty} — 4 cuotas de ${money(cuota)}`;
+    }).join("%0A");
+    const total = $("#cartTotal").textContent;
+    const note  = state.coupon ? `%0A(Cupón: ${state.coupon})` : "";
+    const msg   = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal en 4 cuotas: ${total}${note}`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
   });
 
@@ -184,12 +261,23 @@
   $("#backdrop").addEventListener("click",closeCart);
   $("#clearCart").addEventListener("click",()=>{ state.cart=[]; persistCart(); drawCart(); });
 
+  /* ================== Búsqueda / Filtros básicos ================== */
+  $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value||""; renderProducts(); });
+  $("#searchInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ state.q = e.target.value||""; renderProducts(); }});
+  $("#categoryFilter").addEventListener("change", (e)=>{ state.category = e.target.value; renderProducts(); });
+  $("#sortBy").addEventListener("change", (e)=>{ state.sort = e.target.value; renderProducts(); });
+  $("#clearChips").addEventListener("click", ()=>{ state.chips.clear(); renderProducts(); });
+
   /* ================== Init ================== */
   document.getElementById("year").textContent=new Date().getFullYear();
-  renderProducts(); drawCart();
+  persistCart();
+  renderProducts();
+  drawCart();
   </script>
 </body>
 </html>
+
+
 
 
 
