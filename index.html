@@ -369,27 +369,37 @@
   }
 
   function applyCoupon(code){
-    code = (code || "").trim().toUpperCase();
-    const msg = $("#couponMsg");
-    const removeBtn = $("#removeCouponBtn");
-    const applyBtn = $("#applyCouponBtn");
+  code = (code || "").trim().toUpperCase();
+  const msg = $("#couponMsg");
+  const removeBtn = $("#removeCouponBtn");
+  const applyBtn = $("#applyCouponBtn");
 
-    if(!code){ msg.textContent = "Ingresá un código."; return; }
-    if(!COUPONS[code]){ msg.textContent = "Cupón inválido."; return; }
-    if(isExpired(COUPONS[code].expires)){ msg.textContent = "Cupón vencido."; return; }
+  // Por defecto: sin mensaje visible
+  msg.textContent = "";
 
-    state.coupon = { code };
-    localStorage.setItem("coupon", JSON.stringify(state.coupon));
+  if(!code){ msg.textContent = "Ingresá un código."; return; }
+  if(!COUPONS[code]){ msg.textContent = "Cupón inválido."; return; }
+  if(isExpired(COUPONS[code].expires)){ msg.textContent = "Cupón vencido."; return; }
 
-    const { discount, reason } = calcDiscount();
-    if(reason){ msg.textContent = `Cupón ${code} aplicado, pero: ${reason}`; }
-    else{ msg.textContent = `Cupón aplicado: ${code}`; }
+  // Setear cupón
+  state.coupon = { code };
+  localStorage.setItem("coupon", JSON.stringify(state.coupon));
 
-    $("#couponInput").value = code;
-    removeBtn.style.display = "inline-block";
-    applyBtn.style.display = "none";
+  // Si el cupón existe pero aún no aplica (mínimo, categoría, etc.), mostramos motivo.
+  const { discount, reason } = calcDiscount();
+  if(reason){
+    msg.textContent = reason;  // solo mostramos si hay un problema
+  }else{
+    msg.textContent = "";      // cupón válido y aplicable: no mostrar nada
+  }
 
-    drawCart();
+  $("#couponInput").value = code;
+  removeBtn.style.display = "inline-block";
+  applyBtn.style.display = "none";
+
+  drawCart();
+
+
   }
 
   function removeCoupon(){
@@ -457,25 +467,30 @@
     const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
     cartSubtotal.textContent = money(sub);
 
-    const { discount, reason } = calcDiscount();
-    const discountRow = document.getElementById("discountRow");
-    const cartDiscount = document.getElementById("cartDiscount");
-    const couponMsg = document.getElementById("couponMsg");
+   const { discount, reason } = calcDiscount();
+const discountRow = document.getElementById("discountRow");
+const cartDiscount = document.getElementById("cartDiscount");
+const couponMsg = document.getElementById("couponMsg");
 
-    if(state.coupon){
-      if(discount > 0 && !reason){
-        discountRow.style.display = "flex";
-        cartDiscount.textContent = `- ${money(discount)}`;
-        couponMsg.textContent = `Cupón ${state.coupon.code} aplicado.`;
-      }else{
-        discountRow.style.display = "none";
-        cartDiscount.textContent = "- $ 0";
-        if(reason) couponMsg.textContent = `Cupón ${state.coupon.code}: ${reason}`;
-      }
-    }else{
-      discountRow.style.display = "none";
-      cartDiscount.textContent = "- $ 0";
-    }
+// Por defecto, callamos el mensaje
+couponMsg.textContent = "";
+
+if(state.coupon){
+  if(discount > 0 && !reason){
+    // Válido y aplicable: mostramos solo la fila "Descuento"
+    discountRow.style.display = "flex";
+    cartDiscount.textContent = `- ${money(discount)}`;
+  }else{
+    // Hay cupón pero no aplica: ocultamos fila y mostramos motivo (mínimo, categoría, etc.)
+    discountRow.style.display = "none";
+    cartDiscount.textContent = "- $ 0";
+    if(reason) couponMsg.textContent = reason;
+  }
+}else{
+  discountRow.style.display = "none";
+  cartDiscount.textContent = "- $ 0";
+}
+
 
     const total = Math.max(0, sub - (discount || 0));
     cartTotal.textContent = money(total);
@@ -491,14 +506,17 @@
   };
 
   // Abrir/cerrar carrito + estado cupón
-  function openCart(){
-    cartDrawer.classList.add("open");
-    backdrop.classList.add("show");
-    document.body.classList.add("noscroll");
-    if(state.coupon?.code){
-      $("#couponInput").value = state.coupon.code;
-      $("#removeCouponBtn").style.display = "inline-block";
-      $("#applyCouponBtn").style.display = "none";
+ function openCart(){
+  cartDrawer.classList.add("open");
+  backdrop.classList.add("show");
+  document.body.classList.add("noscroll");
+
+  // No mostrar el código guardado
+  $("#couponInput").value = "";
+  $("#removeCouponBtn").style.display = state.coupon ? "inline-block" : "none";
+  $("#applyCouponBtn").style.display = state.coupon ? "none" : "inline-block";
+
+
     }else{
       $("#removeCouponBtn").style.display = "none";
       $("#applyCouponBtn").style.display = "inline-block";
@@ -628,4 +646,16 @@
   </script>
 </body>
 </html>
+// Auto-aplica cupón si viene en la URL, ej: ?c=AIRESPLIT10
+(function(){
+  const params = new URLSearchParams(location.search);
+  const c = (params.get("c") || "").toUpperCase();
+  if(c && COUPONS[c] && !isExpired(COUPONS[c].expires)){
+    state.coupon = { code: c };
+    localStorage.setItem("coupon", JSON.stringify(state.coupon));
+    drawCart();  // aplica descuento silenciosamente
+  }
+})();
+
+
 
