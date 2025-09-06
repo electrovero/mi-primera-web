@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -12,7 +13,7 @@
   <meta property="og:type" content="website">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=200" />
+  <link rel="stylesheet" href="style.css?v=300" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -44,7 +45,8 @@
     .card-img{width:100%;height:190px;object-fit:cover}
     .card-body{padding:12px;display:flex;flex-direction:column;gap:8px}
     .card-title{margin:0;font-size:16px;font-weight:600}
-    .price{font-weight:700;color:var(--accent)}
+    .price-label{font-size:14px;color:var(--muted)}
+    .price{font-weight:700;color:var(--accent);font-size:20px}
 
     .btn{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}
     .btn--primary{background:var(--accent);color:#fff}
@@ -146,7 +148,8 @@
         <img src="${p.img}" alt="${p.name}" class="card-img">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
-          <div class="price">4 cuotas de ${cuotas(p.price)}</div>
+          <div class="price-label">Precio en 4 cuotas</div>
+          <div class="price">${cuotas(p.price)}</div>
           <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
         </div>
       </article>`;
@@ -169,7 +172,7 @@
     if(!state.cart.length){$("#cartItems").innerHTML="<p>Carrito vacío</p>";$("#cartTotal").textContent=money(0);persist();return;}
     $("#cartItems").innerHTML=state.cart.map(i=>`
       <div>
-        <b>${i.name}</b> x${i.qty}<br>4 cuotas de ${cuotas(i.price)}
+        <b>${i.name}</b> x${i.qty}<br>Precio en 4 cuotas: ${cuotas(i.price)}
       </div>`).join("<hr>");
     const total=state.cart.reduce((a,b)=>a+b.price*b.qty,0);
     $("#cartTotal").textContent=cuotas(total);
