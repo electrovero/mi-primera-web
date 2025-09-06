@@ -12,12 +12,20 @@
   <meta property="og:type" content="website">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=7" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Estilos del modal (para no tocar style.css) -->
+  <!-- Estilos del modal y banner (mini) -->
   <style>
+    .promo-banner{
+      background: linear-gradient(90deg,#15471f,#0b1220 70%);
+      border-bottom:1px solid var(--border);
+      color:#c6f6d5;
+      font-weight:600;
+    }
+    .promo-banner .container{display:flex;gap:10px;align-items:center;justify-content:center;padding:10px 0;flex-wrap:wrap}
+    .promo-banner code{background:#0c1426;border:1px solid var(--border);padding:2px 6px;border-radius:8px;color:#a7f3d0}
     /* ===== Modal de producto ===== */
     .modal{ position: fixed; inset: 0; z-index: 120; display: none; place-items: center; }
     .modal.show{ display: grid; }
@@ -38,7 +46,6 @@
       background:#0c1426; border:1px solid var(--border); color:var(--text);
       border-radius:10px; padding:6px 10px; cursor:pointer;
     }
-    /* backdrop del modal (separado del carrito) */
     #modalBackdrop{ z-index:110; }
   </style>
 </head>
@@ -48,6 +55,14 @@
     <div class="container topbar__inner">
       <span>Envíos a todo el país · 3 y 6 cuotas sin interés</span>
       <a href="#contacto">Ayuda</a>
+    </div>
+  </div>
+
+  <!-- Banner de cupón -->
+  <div class="promo-banner">
+    <div class="container">
+      🔥 10% OFF en <strong>Aires Acondicionados</strong> usando el cupón
+      <code>AIRESPLIT10</code> — Compra mínima <strong>$150.000</strong>. ¡Aprovechá!
     </div>
   </div>
 
@@ -71,7 +86,7 @@
       <div class="selects">
         <select id="categoryFilter">
           <option value="all">Todas las categorías</option>
-          <!-- Las demás opciones se agregan solas con JS -->
+          <!-- El resto se completa solo -->
         </select>
 
         <select id="sortBy">
@@ -138,19 +153,36 @@
       <button id="closeCart" aria-label="Cerrar">✕</button>
     </div>
     <div id="cartItems" class="cart__items"></div>
+
+    <!-- Footer del carrito con cupones -->
     <div class="cart__footer">
+      <!-- CUPÓN -->
+      <div class="cart__row" style="gap:8px; align-items:center; flex-wrap:wrap">
+        <input id="couponInput" type="text" placeholder="Código de descuento"
+               style="flex:1; min-width:180px; background:#0c1426; border:1px solid var(--border); color:var(--text); padding:10px; border-radius:10px; outline:none">
+        <button id="applyCouponBtn" class="btn btn--ghost" type="button">Aplicar</button>
+        <button id="removeCouponBtn" class="btn btn--ghost" type="button" style="display:none">Quitar cupón</button>
+      </div>
+      <div id="couponMsg" class="muted" style="min-height:20px; color:var(--muted);"></div>
+
+      <!-- SUBTOTAL -->
       <div class="cart__row">
         <span>Subtotal</span>
         <strong id="cartSubtotal">$ 0</strong>
       </div>
-      <div class="cart__row">
-        <span>Envío</span>
-        <span>Se coordina</span>
+
+      <!-- DESCUENTO -->
+      <div class="cart__row" id="discountRow" style="display:none">
+        <span>Descuento</span>
+        <strong id="cartDiscount">- $ 0</strong>
       </div>
+
+      <!-- TOTAL -->
       <div class="cart__total">
         <span>Total</span>
         <strong id="cartTotal">$ 0</strong>
       </div>
+
       <button id="checkoutBtn" class="btn btn--primary">Finalizar compra por WhatsApp</button>
       <button id="clearCart" class="btn btn--ghost">Vaciar carrito</button>
     </div>
@@ -188,12 +220,12 @@
   </footer>
 
   <script>
-  /* ================== Datos de productos (EDITÁ A GUSTO) ================== */
+  /* ================== Datos de productos (EJEMPLO) ================== */
   const PRODUCTS = [
     /* === Aires Acondicionados === */
-    { id: 101, name: "Aire Split 3000W Frío/Calor elektra", category: "Aires Acondicionados", price: 799999, img: "./img/aire-philco-3000w.jpg", tags: ["envio","cuotas"] },
-    { id: 102, name: "Aire Split 2500W Inverter candy", category: "Aires Acondicionados", price: 689999, img: "./img/aire-bgh-2500w.jpg", tags: ["oferta","envio"] },
-    { id: 103, name: "Aire Portátil 3000W surrey", category: "Aires Acondicionados", price: 599999, img: "./img/aire-portatil-noblex-3000w.jpg", tags: ["envio"] },
+    { id: 101, name: "Aire Split 3000W Frío/Calor Philco", category: "Aires Acondicionados", price: 799999, img: "./img/aire-philco-3000w.jpg", tags: ["envio","cuotas"] },
+    { id: 102, name: "Aire Split 2500W Inverter BGH", category: "Aires Acondicionados", price: 689999, img: "./img/aire-bgh-2500w.jpg", tags: ["oferta","envio"] },
+    { id: 103, name: "Aire Portátil 3000W Noblex", category: "Aires Acondicionados", price: 599999, img: "./img/aire-portatil-noblex-3000w.jpg", tags: ["envio"] },
 
     /* === Freezer === */
     { id: 201, name: "Freezer Horizontal 300L Gafa", category: "Freezer", price: 559999, img: "./img/freezer-gafa-300l.jpg", tags: ["envio","cuotas"] },
@@ -221,20 +253,49 @@
     { id: 603, name: "Cortadora de Pelo Wahl", category: "Cuidado personal", price: 62999, img: "./img/cortadora-wahl.jpg", tags: ["cuotas"] }
   ];
 
+  /* ================== Cupones disponibles ================== */
+  /*
+    type: "percent" o "fixed"
+    value: número (% o $)
+    min: (opcional) compra mínima ARS
+    category: (opcional) exige al menos 1 item de esa categoría
+    expires: "YYYY-MM-DD"
+  */
+  const COUPONS = {
+    "NAHUEL10":        { type: "percent", value: 10,  min: 100000, expires: "2025-12-31" },
+    "BIENVENIDA5000":  { type: "fixed",   value: 5000, min: 30000,  expires: "2026-12-31" },
+    "TVSALE15":        { type: "percent", value: 15,  category: "TV", min: 200000, expires: "2025-11-30" },
+    "OCTUBRE12":       { type: "percent", value: 12,  expires: "2025-10-31" },
+    "AIRESPLIT10":     { type: "percent", value: 10,  category: "Aires Acondicionados", min: 150000, expires: "2025-12-31" }
+  };
+
   /* ================== Config rápida ================== */
-  const WHATSAPP_NUMBER = "5491127631167"; // tu número en formato internacional sin + ni 00
+  const WHATSAPP_NUMBER = "5491127631167"; // tu número sin + ni 00
 
   /* ================== Helpers ================== */
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
   const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
+  function formatDateYYYYMMDD(d){
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  function isExpired(expires){
+    if(!expires) return false;
+    const today = formatDateYYYYMMDD(new Date());
+    return today > expires;
+  }
+
   /* ================== Estado/Render ================== */
   const grid = $("#productsGrid");
   let state = {
     q: "", category: "all", sort: "relevancia",
     chips: new Set(),
-    cart: JSON.parse(localStorage.getItem("cart") || "[]")
+    cart: JSON.parse(localStorage.getItem("cart") || "[]"),
+    coupon: JSON.parse(localStorage.getItem("coupon") || "null")
   };
 
   function productCard(p){
@@ -283,6 +344,68 @@
     });
   }
 
+  /* ================== Cupón: cálculo y acciones ================== */
+  function calcDiscount(){
+    const code = state.coupon?.code;
+    if(!code) return { discount: 0, reason: null };
+    const rule = COUPONS[code];
+    if(!rule) return { discount: 0, reason: "Cupón inválido." };
+
+    const subtotal = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
+    if(rule.min && subtotal < rule.min)
+      return { discount: 0, reason: `Compra mínima ${money(rule.min)}.` };
+    if(isExpired(rule.expires))
+      return { discount: 0, reason: "Cupón vencido." };
+
+    if(rule.category){
+      const hasCat = state.cart.some(i=>{
+        const p = PRODUCTS.find(x=>x.id===i.id);
+        return p && p.category === rule.category;
+      });
+      if(!hasCat) return { discount: 0, reason: `Válido para categoría: ${rule.category}.` };
+    }
+
+    let discount = 0;
+    if(rule.type === "percent") discount = Math.round(subtotal * (rule.value/100));
+    else if(rule.type === "fixed") discount = rule.value;
+    discount = Math.min(discount, subtotal);
+    return { discount, reason: null };
+  }
+
+  function applyCoupon(code){
+    code = (code || "").trim().toUpperCase();
+    const msg = $("#couponMsg");
+    const removeBtn = $("#removeCouponBtn");
+    const applyBtn = $("#applyCouponBtn");
+
+    if(!code){ msg.textContent = "Ingresá un código."; return; }
+    if(!COUPONS[code]){ msg.textContent = "Cupón inválido."; return; }
+    if(isExpired(COUPONS[code].expires)){ msg.textContent = "Cupón vencido."; return; }
+
+    state.coupon = { code };
+    localStorage.setItem("coupon", JSON.stringify(state.coupon));
+
+    const { discount, reason } = calcDiscount();
+    if(reason){ msg.textContent = `Cupón ${code} aplicado, pero: ${reason}`; }
+    else{ msg.textContent = `Cupón aplicado: ${code}`; }
+
+    $("#couponInput").value = code;
+    removeBtn.style.display = "inline-block";
+    applyBtn.style.display = "none";
+
+    drawCart();
+  }
+
+  function removeCoupon(){
+    state.coupon = null;
+    localStorage.removeItem("coupon");
+    $("#couponMsg").textContent = "";
+    $("#couponInput").value = "";
+    $("#removeCouponBtn").style.display = "none";
+    $("#applyCouponBtn").style.display = "inline-block";
+    drawCart();
+  }
+
   /* ================== Carrito ================== */
   const cartCount = $("#cartCount");
   const cartItems = $("#cartItems");
@@ -314,6 +437,8 @@
     if(!state.cart.length){
       cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
       cartSubtotal.textContent = money(0);
+      document.getElementById("discountRow").style.display = "none";
+      document.getElementById("cartDiscount").textContent = "- $ 0";
       cartTotal.textContent = money(0);
       persistCart();
       return;
@@ -335,7 +460,29 @@
 
     const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
     cartSubtotal.textContent = money(sub);
-    cartTotal.textContent = money(sub);
+
+    const { discount, reason } = calcDiscount();
+    const discountRow = document.getElementById("discountRow");
+    const cartDiscount = document.getElementById("cartDiscount");
+    const couponMsg = document.getElementById("couponMsg");
+
+    if(state.coupon){
+      if(discount > 0 && !reason){
+        discountRow.style.display = "flex";
+        cartDiscount.textContent = `- ${money(discount)}`;
+        couponMsg.textContent = `Cupón ${state.coupon.code} aplicado.`;
+      }else{
+        discountRow.style.display = "none";
+        cartDiscount.textContent = "- $ 0";
+        if(reason) couponMsg.textContent = `Cupón ${state.coupon.code}: ${reason}`;
+      }
+    }else{
+      discountRow.style.display = "none";
+      cartDiscount.textContent = "- $ 0";
+    }
+
+    const total = Math.max(0, sub - (discount || 0));
+    cartTotal.textContent = money(total);
     persistCart();
   }
 
@@ -347,27 +494,55 @@
     if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
   };
 
-  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); document.body.classList.add("noscroll"); }
+  // Abrir/cerrar carrito + estado cupón
+  function openCart(){
+    cartDrawer.classList.add("open");
+    backdrop.classList.add("show");
+    document.body.classList.add("noscroll");
+    if(state.coupon?.code){
+      $("#couponInput").value = state.coupon.code;
+      $("#removeCouponBtn").style.display = "inline-block";
+      $("#applyCouponBtn").style.display = "none";
+    }else{
+      $("#removeCouponBtn").style.display = "none";
+      $("#applyCouponBtn").style.display = "inline-block";
+    }
+  }
   function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); document.body.classList.remove("noscroll"); }
 
-  // Checkout WhatsApp
+  // Checkout WhatsApp (incluye cupón si aplica)
   function buildWhatsappLink(){
     if(!state.cart.length) return null;
+
     const lines = state.cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
-    const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
-    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
+    const subtotal = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
+    const { discount } = calcDiscount();
+    const total = Math.max(0, subtotal - (discount || 0));
+    const couponLine = state.coupon && discount ? `%0ADescuento (${state.coupon.code}): - ${money(discount)}` : "";
+
+    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ASubtotal: ${money(subtotal)}${couponLine}%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   }
 
+  // Listeners
   $("#checkoutBtn").addEventListener("click", ()=>{
     const url = buildWhatsappLink();
     if(!url) return alert("El carrito está vacío.");
     window.open(url, "_blank");
   });
-  $("#clearCart").addEventListener("click", ()=>{ state.cart = []; persistCart(); drawCart(); });
+  $("#clearCart").addEventListener("click", ()=>{
+    state.cart = [];
+    removeCoupon();
+    persistCart();
+    drawCart();
+  });
   $("#openCart").addEventListener("click", openCart);
   $("#closeCart").addEventListener("click", closeCart);
   $("#backdrop").addEventListener("click", closeCart);
+
+  // Cupón: aplicar / quitar
+  document.getElementById("applyCouponBtn").addEventListener("click", ()=> applyCoupon( $("#couponInput").value ));
+  document.getElementById("removeCouponBtn").addEventListener("click", removeCoupon);
 
   /* ================== Búsqueda / Filtros ================== */
   $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value || ""; render(); });
@@ -390,7 +565,7 @@
   $("#whatsFloating").setAttribute("href", wlink);
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  /* ===== Modal de producto (JS) ===== */
+  /* ===== Modal de producto ===== */
   let MODAL_PROD = null;
   const modal = document.getElementById("productModal");
   const modalBackdrop = document.getElementById("modalBackdrop");
@@ -414,27 +589,23 @@
     document.getElementById("modalTitle").textContent = p.name;
     document.getElementById("modalPrice").textContent = money(p.price);
     document.getElementById("modalDesc").textContent = getDesc(p);
-
     modal.classList.add("show");
     modalBackdrop.classList.add("show");
     document.body.classList.add("noscroll");
   }
-
   function hideProduct(){
     modal.classList.remove("show");
     modalBackdrop.classList.remove("show");
     document.body.classList.remove("noscroll");
     MODAL_PROD = null;
   }
-
   document.getElementById("modalClose").addEventListener("click", hideProduct);
   modalBackdrop.addEventListener("click", hideProduct);
   document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && modal.classList.contains("show")) hideProduct(); });
-
   document.getElementById("modalAdd").addEventListener("click", ()=>{ if(!MODAL_PROD) return; addToCart(MODAL_PROD); });
   document.getElementById("modalGoCart").addEventListener("click", ()=>{ hideProduct(); openCart(); });
 
-  // Abrir modal al hacer click en "Ver detalle" o en la imagen
+  // Abrir modal en click imagen o "Ver detalle"
   grid.addEventListener("click", (e)=>{
     const btn = e.target.closest("[data-view]");
     if(!btn) return;
@@ -446,9 +617,7 @@
   /* ===== Poblar categorías automáticamente ===== */
   function populateCategories(){
     const select = document.getElementById("categoryFilter");
-    // borrar opciones anteriores excepto "all"
     [...select.querySelectorAll('option:not([value="all"])')].forEach(o => o.remove());
-    // categorías únicas ordenadas
     const cats = [...new Set(PRODUCTS.map(p => p.category))].sort((a,b)=>a.localeCompare(b));
     cats.forEach(cat => {
       const opt = document.createElement("option");
@@ -463,4 +632,3 @@
   </script>
 </body>
 </html>
-
