@@ -348,7 +348,7 @@
   });
 
   /* ================== Checkout via WhatsApp ================== */
-  const WHATSAPP_NUMBER = "5491127631167";
+  
   function pricePerItemForMsg(i){
     const p = PRODUCTS.find(x=>x.id===i.id);
     return p ? priceWithCouponPerItem(p) : 0;
@@ -374,3 +374,4 @@
   </script>
 </body>
 </html>
+
