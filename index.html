@@ -11,26 +11,17 @@
   <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
   <meta property="og:type" content="website">
 
-  <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=7" />
+  <!-- Estilos (usá tu style.css existente) -->
+  <link rel="stylesheet" href="style.css?v=coupon-manual-1" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Estilos del modal y banner (mini) -->
+  <!-- Estilos mínimos para el modal (si tu CSS ya lo tiene, podés quitar este bloque) -->
   <style>
-    .promo-banner{
-      background: linear-gradient(90deg,#15471f,#0b1220 70%);
-      border-bottom:1px solid var(--border);
-      color:#c6f6d5;
-      font-weight:600;
-    }
-    .promo-banner .container{display:flex;gap:10px;align-items:center;justify-content:center;padding:10px 0;flex-wrap:wrap}
-    .promo-banner code{background:#0c1426;border:1px solid var(--border);padding:2px 6px;border-radius:8px;color:#a7f3d0}
-    /* ===== Modal de producto ===== */
     .modal{ position: fixed; inset: 0; z-index: 120; display: none; place-items: center; }
     .modal.show{ display: grid; }
     .modal__content{
-      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      background: var(--card, #111827); border: 1px solid var(--border, #1f2937); border-radius: 16px;
       width: min(920px, 96vw); max-height: 92vh; overflow: hidden;
       display: grid; grid-template-columns: 1fr; gap: 0;
     }
@@ -39,11 +30,11 @@
     .modal__body{ padding:16px; display:flex; flex-direction:column; gap:12px; }
     .modal__title{ margin:0; font-size:20px; }
     .modal__price{ font-size:18px; font-weight:700; }
-    .modal__desc{ color: var(--muted); line-height:1.5; }
+    .modal__desc{ color: var(--muted, #9ca3af); line-height:1.5; }
     .modal__actions{ display:flex; gap:8px; flex-wrap:wrap; }
     .modal__close{
       position:absolute; top:10px; right:10px;
-      background:#0c1426; border:1px solid var(--border); color:var(--text);
+      background:#0c1426; border:1px solid var(--border, #1f2937); color:var(--text, #e5e7eb);
       border-radius:10px; padding:6px 10px; cursor:pointer;
     }
     #modalBackdrop{ z-index:110; }
@@ -55,10 +46,6 @@
     <div class="container topbar__inner">
       <span>Envíos a todo el país · 3 y 6 cuotas sin interés</span>
       <a href="#contacto">Ayuda</a>
-    </div>
-  </div>
-
-  
     </div>
   </div>
 
@@ -82,7 +69,7 @@
       <div class="selects">
         <select id="categoryFilter">
           <option value="all">Todas las categorías</option>
-          <!-- El resto se completa solo -->
+          <!-- Se completa solo -->
         </select>
 
         <select id="sortBy">
@@ -149,43 +136,40 @@
       <button id="closeCart" aria-label="Cerrar">✕</button>
     </div>
     <div id="cartItems" class="cart__items"></div>
-
-    <!-- Footer del carrito con cupones -->
     <div class="cart__footer">
-      <!-- CUPÓN -->
-      <div class="cart__row" style="gap:8px; align-items:center; flex-wrap:wrap">
-        <input id="couponInput" type="text" placeholder="Código de descuento"
-               style="flex:1; min-width:180px; background:#0c1426; border:1px solid var(--border); color:var(--text); padding:10px; border-radius:10px; outline:none">
-        <button id="applyCouponBtn" class="btn btn--ghost" type="button">Aplicar</button>
-        <button id="removeCouponBtn" class="btn btn--ghost" type="button" style="display:none">Quitar cupón</button>
-      </div>
-      <div id="couponMsg" class="muted" style="min-height:20px; color:var(--muted);"></div>
-
-      <!-- SUBTOTAL -->
       <div class="cart__row">
         <span>Subtotal</span>
         <strong id="cartSubtotal">$ 0</strong>
       </div>
 
-      <!-- DESCUENTO -->
+      <!-- Descuento: se muestra solo si aplica -->
       <div class="cart__row" id="discountRow" style="display:none">
         <span>Descuento</span>
         <strong id="cartDiscount">- $ 0</strong>
       </div>
 
-      <!-- TOTAL -->
       <div class="cart__total">
         <span>Total</span>
         <strong id="cartTotal">$ 0</strong>
       </div>
 
-      <button id="checkoutBtn" class="btn btn--primary">Finalizar compra por WhatsApp</button>
+      <!-- Campo de cupón (manual) -->
+      <div style="margin-top:10px">
+        <input id="couponInput" type="text" placeholder="Código de descuento" autocomplete="off" style="width:100%;padding:8px;border-radius:8px;border:1px solid #444;background:#111;color:#fff">
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="applyCouponBtn" class="btn btn--primary">Aplicar cupón</button>
+          <button id="removeCouponBtn" class="btn btn--ghost" style="display:none">Quitar cupón</button>
+        </div>
+        <p id="couponMsg" style="color:#ef4444;margin:6px 0 0;font-size:14px"></p>
+      </div>
+
+      <button id="checkoutBtn" class="btn btn--primary" style="margin-top:12px">Finalizar compra por WhatsApp</button>
       <button id="clearCart" class="btn btn--ghost">Vaciar carrito</button>
     </div>
   </aside>
   <div id="backdrop" class="backdrop"></div>
 
-  <!-- ===== Modal de producto ===== -->
+  <!-- Modal producto -->
   <div id="modalBackdrop" class="backdrop"></div>
   <div id="productModal" class="modal">
     <button id="modalClose" class="modal__close" aria-label="Cerrar">✕</button>
@@ -202,7 +186,6 @@
       </div>
     </div>
   </div>
-  <!-- ============================ -->
 
   <footer class="footer">
     <div class="container footer__inner">
@@ -216,53 +199,26 @@
   </footer>
 
   <script>
-  /* ================== Datos de productos (EJEMPLO) ================== */
+  /* ================== Catálogo (ejemplo) ================== */
   const PRODUCTS = [
-    /* === Aires Acondicionados === */
-    { id: 101, name: "Aire Split 3000W Frío/Calor Philco", category: "Aires Acondicionados", price: 799999, img: "./img/aire-philco-3000w.jpg", tags: ["envio","cuotas"] },
-    { id: 102, name: "Aire Split 2500W Inverter BGH", category: "Aires Acondicionados", price: 689999, img: "./img/aire-bgh-2500w.jpg", tags: ["oferta","envio"] },
-    { id: 103, name: "Aire Portátil 3000W Noblex", category: "Aires Acondicionados", price: 599999, img: "./img/aire-portatil-noblex-3000w.jpg", tags: ["envio"] },
-
-    /* === Freezer === */
-    { id: 201, name: "Freezer Horizontal 300L Gafa", category: "Freezer", price: 559999, img: "./img/freezer-gafa-300l.jpg", tags: ["envio","cuotas"] },
-    { id: 202, name: "Freezer Vertical 220L Patrick", category: "Freezer", price: 529999, img: "./img/freezer-vertical-patrick-220l.jpg", tags: ["oferta"] },
-    { id: 203, name: "Freezer Horizontal 200L Patrick", category: "Freezer", price: 429999, img: "./img/freezer-horizontal-200l.jpg", tags: ["envio"] },
-
-    /* === Equipos de música === */
-    { id: 301, name: "Torre de Sonido 500W Bluetooth", category: "Equipos de música", price: 249999, img: "./img/torre-sonido-500w.jpg", tags: ["cuotas"] },
-    { id: 302, name: "Minicomponente LG 1500W", category: "Equipos de música", price: 459999, img: "./img/minicomponente-lg-1500w.jpg", tags: ["oferta","envio"] },
-    { id: 303, name: "Barra de Sonido 2.1 con Subwoofer", category: "Equipos de música", price: 199999, img: "./img/barra-sonido-21.jpg", tags: ["envio"] },
-
-    /* === Microondas === */
-    { id: 401, name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
-    { id: 402, name: "Microondas Samsung 30L", category: "Microondas", price: 189999, img: "./img/microondas-samsung-30l.jpg", tags: ["cuotas"] },
-    { id: 403, name: "Microondas Philips 25L Blanco", category: "Microondas", price: 139999, img: "./img/microondas-philips-25l.jpg", tags: ["envio"] },
-
-    /* === Termotanques y hornos eléctricos === */
-    { id: 501, name: "Termotanque Eléctrico 80L Rheem", category: "Termotanques y hornos eléctricos", price: 389999, img: "./img/termotanque-rheem-80l.jpg", tags: ["envio"] },
-    { id: 502, name: "Horno Eléctrico 60L Atma", category: "Termotanques y hornos eléctricos", price: 179999, img: "./img/horno-electrico-atma-60l.jpg", tags: ["oferta","cuotas"] },
-    { id: 503, name: "Horno Eléctrico 45L BGH", category: "Termotanques y hornos eléctricos", price: 149999, img: "./img/horno-electrico-bgh-45l.jpg", tags: ["envio"] },
-
-    /* === Cuidado personal === */
-    { id: 601, name: "Afeitadora Eléctrica Philips Serie 3000", category: "Cuidado personal", price: 79999, img: "./img/afeitadora-philips-s3000.jpg", tags: ["oferta"] },
-    { id: 602, name: "Secador de Pelo 2200W", category: "Cuidado personal", price: 54999, img: "./img/secador-2200w.jpg", tags: ["envio"] },
-    { id: 603, name: "Cortadora de Pelo Wahl", category: "Cuidado personal", price: 62999, img: "./img/cortadora-wahl.jpg", tags: ["cuotas"] }
+    { id: 1,  name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
+    { id: 2,  name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg", tags: ["cuotas","envio"] },
+    { id: 3,  name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
+    { id: 4,  name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] }
   ];
 
-  /* ================== Cupones disponibles ================== */
-  /*
-    type: "percent" o "fixed"
-    value: número (% o $)
-    min: (opcional) compra mínima ARS
-    category: (opcional) exige al menos 1 item de esa categoría
-    expires: "YYYY-MM-DD"
-  */
+  /* ================== Cupones (10%, uso único) ================== */
   const COUPONS = {
-    "NAHUEL10":        { type: "percent", value: 10,  min: 100000, expires: "2025-12-31" },
-    "BIENVENIDA5000":  { type: "fixed",   value: 5000, min: 30000,  expires: "2026-12-31" },
-    "TVSALE15":        { type: "percent", value: 15,  category: "TV", min: 200000, expires: "2025-11-30" },
-    "OCTUBRE12":       { type: "percent", value: 12,  expires: "2025-10-31" },
-    "AIRESPLIT10":     { type: "percent", value: 10,  category: "Aires Acondicionados", min: 150000, expires: "2025-12-31" }
+    "AHORRO10A": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10B": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10C": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10D": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10E": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10F": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10G": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10H": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10I": { type: "percent", value: 10, expires: "2030-12-31" },
+    "AHORRO10J": { type: "percent", value: 10, expires: "2030-12-31" }
   };
 
   /* ================== Config rápida ================== */
@@ -272,17 +228,19 @@
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
   const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+  function isExpired(dateStr){ return new Date(dateStr) < new Date(); }
 
-  function formatDateYYYYMMDD(d){
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,'0');
-    const dd = String(d.getDate()).padStart(2,'0');
-    return `${yyyy}-${mm}-${dd}`;
-  }
-  function isExpired(expires){
-    if(!expires) return false;
-    const today = formatDateYYYYMMDD(new Date());
-    return today > expires;
+  /* ====== Un solo uso por navegador ====== */
+  const USED_KEY = "usedCoupons";
+  function getUsedCoupons(){ try { return JSON.parse(localStorage.getItem(USED_KEY) || "[]"); } catch { return []; } }
+  function isCodeUsed(code){ return getUsedCoupons().includes(code); }
+  function markCodeUsed(code){
+    if(!code) return;
+    const list = getUsedCoupons();
+    if(!list.includes(code)){
+      list.push(code);
+      localStorage.setItem(USED_KEY, JSON.stringify(list));
+    }
   }
 
   /* ================== Estado/Render ================== */
@@ -291,7 +249,7 @@
     q: "", category: "all", sort: "relevancia",
     chips: new Set(),
     cart: JSON.parse(localStorage.getItem("cart") || "[]"),
-    coupon: JSON.parse(localStorage.getItem("coupon") || "null")
+    coupon: JSON.parse(localStorage.getItem("coupon") || "null") // { code }
   };
 
   function productCard(p){
@@ -340,76 +298,15 @@
     });
   }
 
-  /* ================== Cupón: cálculo y acciones ================== */
-  function calcDiscount(){
-    const code = state.coupon?.code;
-    if(!code) return { discount: 0, reason: null };
-    const rule = COUPONS[code];
-    if(!rule) return { discount: 0, reason: "Cupón inválido." };
-
-    const subtotal = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
-    if(rule.min && subtotal < rule.min)
-      return { discount: 0, reason: `Compra mínima ${money(rule.min)}.` };
-    if(isExpired(rule.expires))
-      return { discount: 0, reason: "Cupón vencido." };
-
-    if(rule.category){
-      const hasCat = state.cart.some(i=>{
-        const p = PRODUCTS.find(x=>x.id===i.id);
-        return p && p.category === rule.category;
-      });
-      if(!hasCat) return { discount: 0, reason: `Válido para categoría: ${rule.category}.` };
-    }
-
-    let discount = 0;
-    if(rule.type === "percent") discount = Math.round(subtotal * (rule.value/100));
-    else if(rule.type === "fixed") discount = rule.value;
-    discount = Math.min(discount, subtotal);
-    return { discount, reason: null };
-  }
-
-  function applyCoupon(code){
-  code = (code || "").trim().toUpperCase();
-  const msg = $("#couponMsg");
-  const removeBtn = $("#removeCouponBtn");
-  const applyBtn = $("#applyCouponBtn");
-
-  // Por defecto: sin mensaje visible
-  msg.textContent = "";
-
-  if(!code){ msg.textContent = "Ingresá un código."; return; }
-  if(!COUPONS[code]){ msg.textContent = "Cupón inválido."; return; }
-  if(isExpired(COUPONS[code].expires)){ msg.textContent = "Cupón vencido."; return; }
-
-  // Setear cupón
-  state.coupon = { code };
-  localStorage.setItem("coupon", JSON.stringify(state.coupon));
-
-  // Si el cupón existe pero aún no aplica (mínimo, categoría, etc.), mostramos motivo.
-  const { discount, reason } = calcDiscount();
-  if(reason){
-    msg.textContent = reason;  // solo mostramos si hay un problema
-  }else{
-    msg.textContent = "";      // cupón válido y aplicable: no mostrar nada
-  }
-
-  $("#couponInput").value = code;
-  removeBtn.style.display = "inline-block";
-  applyBtn.style.display = "none";
-
-  drawCart();
-
-
-  }
-
-  function removeCoupon(){
-    state.coupon = null;
-    localStorage.removeItem("coupon");
-    $("#couponMsg").textContent = "";
-    $("#couponInput").value = "";
-    $("#removeCouponBtn").style.display = "none";
-    $("#applyCouponBtn").style.display = "inline-block";
-    drawCart();
+  /* ================== Descripciones base para modal ================== */
+  function getDesc(p){
+    const base = {
+      "Heladeras": "Eficiencia y capacidad para tu hogar. Garantía oficial.",
+      "Lavarropas": "Tecnología inverter con bajo consumo.",
+      "Microondas": "Cocción rápida y funciones grill.",
+      "TV": "Smart TV con apps y conectividad."
+    };
+    return p.desc || base[p.category] || "Producto de calidad con garantía y soporte.";
   }
 
   /* ================== Carrito ================== */
@@ -423,7 +320,7 @@
   function addToCart(prod){
     const found = state.cart.find(i=>i.id===prod.id);
     if (found) found.qty += 1; else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
-    persistCart(); openCart(); drawCart();
+    persistCart(); drawCart();
   }
   function removeFromCart(id){
     state.cart = state.cart.filter(i=>i.id!==id);
@@ -437,8 +334,25 @@
   }
   function persistCart(){
     localStorage.setItem("cart", JSON.stringify(state.cart));
+    if(state.coupon) localStorage.setItem("coupon", JSON.stringify(state.coupon));
     cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
   }
+
+  function calcDiscount(){
+    const code = state.coupon?.code;
+    if(!code) return { discount: 0, reason: null };
+    if(isCodeUsed(code)) return { discount: 0, reason: "Este cupón ya fue utilizado en este dispositivo." };
+    const rule = COUPONS[code];
+    if(!rule) return { discount: 0, reason: "Cupón inválido." };
+    if(isExpired(rule.expires)) return { discount: 0, reason: "Cupón vencido." };
+
+    const subtotal = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
+    let discount = 0;
+    if(rule.type === "percent") discount = Math.round(subtotal * (rule.value/100));
+    else if(rule.type === "fixed") discount = Math.min(rule.value, subtotal);
+    return { discount, reason: null };
+  }
+
   function drawCart(){
     if(!state.cart.length){
       cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
@@ -446,7 +360,6 @@
       document.getElementById("discountRow").style.display = "none";
       document.getElementById("cartDiscount").textContent = "- $ 0";
       cartTotal.textContent = money(0);
-      persistCart();
       return;
     }
     cartItems.innerHTML = state.cart.map(i=>`
@@ -467,34 +380,23 @@
     const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
     cartSubtotal.textContent = money(sub);
 
-   const { discount, reason } = calcDiscount();
-const discountRow = document.getElementById("discountRow");
-const cartDiscount = document.getElementById("cartDiscount");
-const couponMsg = document.getElementById("couponMsg");
+    const { discount, reason } = calcDiscount();
+    const discountRow = document.getElementById("discountRow");
+    const cartDiscount = document.getElementById("cartDiscount");
+    const couponMsg = document.getElementById("couponMsg");
 
-// Por defecto, callamos el mensaje
-couponMsg.textContent = "";
-
-if(state.coupon){
-  if(discount > 0 && !reason){
-    // Válido y aplicable: mostramos solo la fila "Descuento"
-    discountRow.style.display = "flex";
-    cartDiscount.textContent = `- ${money(discount)}`;
-  }else{
-    // Hay cupón pero no aplica: ocultamos fila y mostramos motivo (mínimo, categoría, etc.)
-    discountRow.style.display = "none";
-    cartDiscount.textContent = "- $ 0";
-    if(reason) couponMsg.textContent = reason;
-  }
-}else{
-  discountRow.style.display = "none";
-  cartDiscount.textContent = "- $ 0";
-}
-
+    couponMsg.textContent = "";
+    if(state.coupon && discount > 0 && !reason){
+      discountRow.style.display = "flex";
+      cartDiscount.textContent = `- ${money(discount)}`;
+    }else{
+      discountRow.style.display = "none";
+      cartDiscount.textContent = "- $ 0";
+      if(reason) couponMsg.textContent = reason;
+    }
 
     const total = Math.max(0, sub - (discount || 0));
     cartTotal.textContent = money(total);
-    persistCart();
   }
 
   // Delegación de eventos del carrito
@@ -505,58 +407,69 @@ if(state.coupon){
     if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
   };
 
-  // Abrir/cerrar carrito + estado cupón
- function openCart(){
-  cartDrawer.classList.add("open");
-  backdrop.classList.add("show");
-  document.body.classList.add("noscroll");
-
-  // No mostrar el código guardado
-  $("#couponInput").value = "";
-  $("#removeCouponBtn").style.display = state.coupon ? "inline-block" : "none";
-  $("#applyCouponBtn").style.display = state.coupon ? "none" : "inline-block";
-
-
-    }else{
-      $("#removeCouponBtn").style.display = "none";
-      $("#applyCouponBtn").style.display = "inline-block";
-    }
-  }
+  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); document.body.classList.add("noscroll"); }
   function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); document.body.classList.remove("noscroll"); }
-
-  // Checkout WhatsApp (incluye cupón si aplica)
-  function buildWhatsappLink(){
-    if(!state.cart.length) return null;
-
-    const lines = state.cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
-    const subtotal = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
-    const { discount } = calcDiscount();
-    const total = Math.max(0, subtotal - (discount || 0));
-    const couponLine = state.coupon && discount ? `%0ADescuento (${state.coupon.code}): - ${money(discount)}` : "";
-
-    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ASubtotal: ${money(subtotal)}${couponLine}%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
-  }
-
-  // Listeners
-  $("#checkoutBtn").addEventListener("click", ()=>{
-    const url = buildWhatsappLink();
-    if(!url) return alert("El carrito está vacío.");
-    window.open(url, "_blank");
-  });
-  $("#clearCart").addEventListener("click", ()=>{
-    state.cart = [];
-    removeCoupon();
-    persistCart();
-    drawCart();
-  });
   $("#openCart").addEventListener("click", openCart);
   $("#closeCart").addEventListener("click", closeCart);
   $("#backdrop").addEventListener("click", closeCart);
 
-  // Cupón: aplicar / quitar
-  document.getElementById("applyCouponBtn").addEventListener("click", ()=> applyCoupon( $("#couponInput").value ));
-  document.getElementById("removeCouponBtn").addEventListener("click", removeCoupon);
+  // Aplicar / Quitar cupón (manual)
+  $("#applyCouponBtn").addEventListener("click", ()=>{
+    const code = $("#couponInput").value.trim().toUpperCase();
+    const msg = $("#couponMsg");
+    if(!code){ msg.textContent = "Ingresá un código."; return; }
+    if(isCodeUsed(code)){ msg.textContent = "Este cupón ya fue utilizado en este dispositivo."; return; }
+    const rule = COUPONS[code];
+    if(!rule){ msg.textContent = "Cupón inválido."; return; }
+    if(isExpired(rule.expires)){ msg.textContent = "Cupón vencido."; return; }
+
+    state.coupon = { code };
+    msg.textContent = "";
+    $("#applyCouponBtn").style.display = "none";
+    $("#removeCouponBtn").style.display = "inline-block";
+    persistCart(); drawCart();
+  });
+
+  $("#removeCouponBtn").addEventListener("click", ()=>{
+    state.coupon = null;
+    localStorage.removeItem("coupon");
+    $("#couponInput").value = "";
+    $("#couponMsg").textContent = "";
+    $("#applyCouponBtn").style.display = "inline-block";
+    $("#removeCouponBtn").style.display = "none";
+    drawCart();
+  });
+
+  // Checkout (marca cupón como usado si aplicó descuento)
+  function buildWhatsappLink(){
+    if(!state.cart.length) return null;
+    const lines = state.cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
+    const subtotal = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+    const { discount } = calcDiscount();
+    const total = Math.max(0, subtotal - (discount || 0));
+    const couponLine = state.coupon && discount ? `%0ADescuento (${state.coupon.code}): - ${money(discount)}` : "";
+    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ASubtotal: ${money(subtotal)}${couponLine}%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+  }
+
+  $("#checkoutBtn").addEventListener("click", ()=>{
+    const url = buildWhatsappLink();
+    if(!url) return alert("El carrito está vacío.");
+    // Si hay cupón con descuento, lo marcamos como usado y lo limpiamos
+    const code = state.coupon?.code || null;
+    const { discount } = calcDiscount();
+    if(code && discount > 0){
+      markCodeUsed(code);                 // se quema en este navegador
+      state.coupon = null;
+      localStorage.removeItem("coupon");
+    }
+    window.open(url, "_blank");
+  });
+
+  $("#clearCart").addEventListener("click", ()=>{
+    state.cart = [];
+    persistCart(); drawCart();
+  });
 
   /* ================== Búsqueda / Filtros ================== */
   $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value || ""; render(); });
@@ -583,19 +496,6 @@ if(state.coupon){
   let MODAL_PROD = null;
   const modal = document.getElementById("productModal");
   const modalBackdrop = document.getElementById("modalBackdrop");
-
-  function getDesc(p){
-    const base = {
-      "Aires Acondicionados": "Climatización frío/calor con bajo consumo.",
-      "Freezer": "Gran capacidad de conservación y eficiencia.",
-      "Equipos de música": "Sonido potente con conectividad moderna.",
-      "Microondas": "Calentá y cociná rápido con funciones útiles.",
-      "Termotanques y hornos eléctricos": "Agua caliente y cocción eléctrica eficiente.",
-      "Cuidado personal": "Herramientas para tu rutina diaria."
-    };
-    return p.desc || base[p.category] || "Producto de calidad con garantía y soporte.";
-  }
-
   function showProduct(p){
     MODAL_PROD = p;
     document.getElementById("modalImg").src = p.img;
@@ -619,7 +519,7 @@ if(state.coupon){
   document.getElementById("modalAdd").addEventListener("click", ()=>{ if(!MODAL_PROD) return; addToCart(MODAL_PROD); });
   document.getElementById("modalGoCart").addEventListener("click", ()=>{ hideProduct(); openCart(); });
 
-  // Abrir modal en click imagen o "Ver detalle"
+  // Abrir modal al click en imagen o botón "Ver detalle"
   grid.addEventListener("click", (e)=>{
     const btn = e.target.closest("[data-view]");
     if(!btn) return;
@@ -646,16 +546,3 @@ if(state.coupon){
   </script>
 </body>
 </html>
-// Auto-aplica cupón si viene en la URL, ej: ?c=AIRESPLIT10
-(function(){
-  const params = new URLSearchParams(location.search);
-  const c = (params.get("c") || "").toUpperCase();
-  if(c && COUPONS[c] && !isExpired(COUPONS[c].expires)){
-    state.coupon = { code: c };
-    localStorage.setItem("coupon", JSON.stringify(state.coupon));
-    drawCart();  // aplica descuento silenciosamente
-  }
-})();
-
-
-
