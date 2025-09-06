@@ -4,9 +4,61 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nahuel Electrohogar | Tienda de Electrodomésticos</title>
-  <link rel="stylesheet" href="style.css?v=101" />
+
+  <!-- SEO -->
+  <meta name="description" content="Electrodomésticos con envío a todo el país. Heladeras, lavarropas, TV, cocinas y más.">
+  <meta property="og:title" content="Nahuel Electrohogar">
+  <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
+  <meta property="og:type" content="website">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css?v=200" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f5f7fa; --panel:#ffffff; --card:#ffffff;
+      --text:#1f2937; --muted:#6b7280; --border:#e5e7eb;
+      --accent:#2563eb; --accent-2:#1e40af; --danger:#dc2626;
+    }
+    body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);}
+    .container{max-width:1200px;margin:auto;padding:0 16px}
+
+    .topbar{background:var(--accent);color:#fff;font-size:14px}
+    .topbar__inner{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
+    .topbar a{color:#fff;text-decoration:none}
+
+    .nav{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--border);}
+    .nav__inner{display:flex;align-items:center;gap:16px;padding:14px 0}
+    .logo{color:var(--accent);text-decoration:none;font-weight:700;font-size:20px}
+    .searchbox{display:flex;gap:8px;flex:1}
+    .searchbox input{flex:1;border:1px solid var(--border);padding:10px;border-radius:8px}
+    .searchbox button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer}
+    .cartbtn{background:#f9fafb;border:1px solid var(--border);padding:8px 12px;border-radius:8px;cursor:pointer;position:relative}
+    .badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:50%;padding:2px 6px;font-size:12px}
+
+    h1{margin:24px 0 12px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 5px rgba(0,0,0,.05);}
+    .card-img{width:100%;height:190px;object-fit:cover}
+    .card-body{padding:12px;display:flex;flex-direction:column;gap:8px}
+    .card-title{margin:0;font-size:16px;font-weight:600}
+    .price{font-weight:700;color:var(--accent)}
+
+    .btn{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+    .btn--primary{background:var(--accent);color:#fff}
+    .btn--ghost{background:#f3f4f6;color:var(--text)}
+    .btn--whatsapp{background:#25d366;color:#fff;border:none;padding:10px 16px;border-radius:8px;text-decoration:none;display:inline-block}
+
+    .cart{position:fixed;top:0;right:0;width:400px;max-width:96%;height:100%;background:#fff;border-left:1px solid var(--border);transform:translateX(100%);transition:.3s;z-index:100;display:flex;flex-direction:column}
+    .cart.open{transform:translateX(0);}
+    .cart__header{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border)}
+    .cart__items{flex:1;overflow:auto;padding:12px}
+    .cart__footer{border-top:1px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:10px}
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:.3s;z-index:90}
+    .backdrop.show{opacity:1;visibility:visible}
+  </style>
 </head>
 <body>
   <!-- Top bar -->
@@ -22,60 +74,29 @@
     <div class="container nav__inner">
       <a href="#" class="logo">Nahuel<span>Electro</span></a>
       <div class="searchbox">
-        <input id="searchInput" type="search" placeholder="Buscar: heladera, TV, lavarropas..." />
+        <input id="searchInput" type="search" placeholder="Buscar productos..." />
         <button id="searchBtn">Buscar</button>
       </div>
-      <button id="openCart" class="cartbtn" aria-label="Abrir carrito">🛒<span id="cartCount" class="badge">0</span></button>
+      <button id="openCart" class="cartbtn">🛒<span id="cartCount" class="badge">0</span></button>
     </div>
   </header>
 
-  <!-- Filtros -->
-  <section class="filters">
-    <div class="container filters__inner">
-      <div class="selects">
-        <select id="categoryFilter">
-          <option value="all">Todas las categorías</option>
-          <option value="Heladeras">Heladeras</option>
-          <option value="Lavarropas">Lavarropas</option>
-          <option value="Microondas">Microondas</option>
-          <option value="Aires">Aires Acond.</option>
-          <option value="TV">Smart TV</option>
-          <option value="Cocinas">Cocinas</option>
-          <option value="Pequeños">Pequeños</option>
-        </select>
-        <select id="sortBy">
-          <option value="relevancia">Ordenar por: Relevancia</option>
-          <option value="precio-asc">Precio: menor a mayor</option>
-          <option value="precio-desc">Precio: mayor a menor</option>
-          <option value="nombre-asc">Nombre A→Z</option>
-        </select>
-      </div>
-      <div class="chips" id="promoChips">
-        <button class="chip" data-chip="envio">🚚 Envío gratis</button>
-        <button class="chip" data-chip="cuotas">💳 6 cuotas</button>
-        <button class="chip" data-chip="oferta">🔥 Oferta</button>
-        <button id="clearChips" class="link">Limpiar</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Grid de productos -->
   <main class="container">
     <h1>Ofertas destacadas</h1>
     <div id="productsGrid" class="grid"></div>
   </main>
 
-  <!-- Carrito (drawer) -->
+  <!-- Carrito -->
   <aside id="cartDrawer" class="cart">
     <div class="cart__header">
       <h3>Tu carrito</h3>
-      <button id="closeCart" aria-label="Cerrar">✕</button>
+      <button id="closeCart">✕</button>
     </div>
     <div id="cartItems" class="cart__items"></div>
     <div class="cart__footer">
-      <div class="cart__row">
-        <span>Total</span>
-        <strong id="cartTotal">$ 0</strong>
+      <div class="cart__total">
+        <span>Total en 4 cuotas</span>
+        <strong id="cartTotal">$0</strong>
       </div>
       <button id="checkoutBtn" class="btn btn--primary">Finalizar compra por WhatsApp</button>
       <button id="clearCart" class="btn btn--ghost">Vaciar carrito</button>
@@ -83,126 +104,97 @@
   </aside>
   <div id="backdrop" class="backdrop"></div>
 
-  <footer class="footer">
-    <div class="container footer__inner">
-      <p>© <span id="year"></span> Nahuel Electrohogar</p>
-    </div>
+  <section id="contacto" class="container">
+    <h2>Contacto</h2>
+    <a class="btn--whatsapp" id="whatsFloating" target="_blank">💬 WhatsApp</a>
+  </section>
+
+  <footer class="footer container">
+    <p>© <span id="year"></span> Nahuel Electrohogar</p>
   </footer>
 
   <script>
-  // ================== Productos de ejemplo ==================
   const PRODUCTS = [
-    { id: 1, name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
-    { id: 2, name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] }
+    { id: 1, name:"Heladera Samsung 360L", category:"Heladeras", price:699999, img:"./img/heladera-samsung-360l.jpg"},
+    { id: 2, name:"Lavarropas LG 8kg Inverter", category:"Lavarropas", price:589999, img:"./img/lavarropas-lg-8kg.jpg"},
+    { id: 3, name:"Microondas BGH 28L Grill", category:"Microondas", price:149999, img:"./img/microondas-bgh-28l.jpg"},
+    { id: 4, name:"Smart TV LG 55 4K", category:"TV", price:679999, img:"./img/tv-lg-55-4k.jpg"},
+    { id: 5, name:"Aire Split 3000W", category:"Aires", price:799999, img:"./img/aire-split-3000w.jpg"},
+    { id: 20, name:"TV RCA 50\"", category:"TV", price:349999, img:"./img/tv-50-rca.jpg"},
+    { id: 21, name:"TV Noblex 100\"", category:"TV", price:799999, img:"./img/tv-noblex-100.jpg"},
+    { id: 22, name:"TV Noblex 75\"", category:"TV", price:659999, img:"./img/tv-noblex-75.jpg"},
+    { id: 23, name:"TV Noblex Roku 43\"", category:"TV", price:289999, img:"./img/tv-noblex-roku-43.jpg"},
+    { id: 24, name:"TV Philips 50\"", category:"TV", price:359999, img:"./img/tv-philips-50.jpg"},
+    { id: 25, name:"TV Philips 65\"", category:"TV", price:459999, img:"./img/tv-philips-65.jpg"},
+    { id: 26, name:"TV Quint 32\"", category:"TV", price:159999, img:"./img/tv-quint-32.jpg"},
+    { id: 27, name:"TV Sharp 50\"", category:"TV", price:329999, img:"./img/tv-sharp-50.jpg"},
+    { id: 28, name:"TV TCL 43\"", category:"TV", price:259999, img:"./img/tv-tcl-43.jpg"},
+    { id: 29, name:"TV Xiaomi 86\"", category:"TV", price:899999, img:"./img/tv-xiaomi-86.jpg"}
   ];
 
   const WHATSAPP_NUMBER = "5491127631167";
+  const $ = (s)=>document.querySelector(s);
+  const $$ = (s)=>document.querySelectorAll(s);
+  const money=(n)=>n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
+  const cuotas=(p)=> money(((p*2*1.1)/4));
 
-  // Helpers
-  const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => document.querySelectorAll(sel);
-  const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+  let state={cart:JSON.parse(localStorage.getItem("cart")||"[]")};
 
-  // Función de cuota: (precio × 2 + 10%) ÷ 4
-  function cuota4(n){
-    let totalFinanciado = n * 2 * 1.10;
-    return totalFinanciado / 4;
-  }
-
-  // Render productos
-  const grid = $("#productsGrid");
   function productCard(p){
     return `
       <article class="card">
-        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
+        <img src="${p.img}" alt="${p.name}" class="card-img">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
-          <div class="price">4 cuotas de ${money(cuota4(p.price))}</div>
+          <div class="price">4 cuotas de ${cuotas(p.price)}</div>
           <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
         </div>
-      </article>
-    `;
+      </article>`;
   }
+
   function render(){
-    grid.innerHTML = PRODUCTS.map(productCard).join("");
+    $("#productsGrid").innerHTML=PRODUCTS.map(productCard).join("");
     $$("[data-add]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const id = Number(btn.getAttribute("data-add"));
-        const prod = PRODUCTS.find(p=>p.id===id);
-        addToCart(prod);
-      });
+      btn.onclick=()=>addToCart(PRODUCTS.find(p=>p.id==btn.dataset.add));
     });
   }
 
-  // Carrito
-  let state = { cart: JSON.parse(localStorage.getItem("cart") || "[]") };
-  const cartCount = $("#cartCount");
-  const cartItems = $("#cartItems");
-  const cartTotal = $("#cartTotal");
-  const cartDrawer = $("#cartDrawer");
-  const backdrop = $("#backdrop");
-
   function addToCart(prod){
-    const found = state.cart.find(i=>i.id===prod.id);
-    if (found) found.qty += 1;
-    else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
-    persistCart(); openCart(); drawCart();
+    let found=state.cart.find(i=>i.id==prod.id);
+    if(found)found.qty++; else state.cart.push({...prod,qty:1});
+    persist();drawCart();openCart();
   }
-  function persistCart(){
-    localStorage.setItem("cart", JSON.stringify(state.cart));
-    cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
-  }
+  function persist(){localStorage.setItem("cart",JSON.stringify(state.cart));$("#cartCount").textContent=state.cart.reduce((a,b)=>a+b.qty,0);}
   function drawCart(){
-    if(!state.cart.length){
-      cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
-      cartTotal.textContent = money(0);
-      return;
-    }
-    cartItems.innerHTML = state.cart.map(i=>`
-      <div class="cartline">
-        <div>
-          <strong>${i.name}</strong><br>
-          <span>4 cuotas de ${money(cuota4(i.price))} (x${i.qty})</span>
-        </div>
-        <div>
-          <button type="button" data-dec="${i.id}">−</button>
-          <span>${i.qty}</span>
-          <button type="button" data-inc="${i.id}">+</button>
-        </div>
-      </div>
-    `).join("");
-
-    const sub = state.cart.reduce((a,b)=>a + cuota4(b.price)*b.qty, 0);
-    cartTotal.textContent = money(sub);
+    if(!state.cart.length){$("#cartItems").innerHTML="<p>Carrito vacío</p>";$("#cartTotal").textContent=money(0);persist();return;}
+    $("#cartItems").innerHTML=state.cart.map(i=>`
+      <div>
+        <b>${i.name}</b> x${i.qty}<br>4 cuotas de ${cuotas(i.price)}
+      </div>`).join("<hr>");
+    const total=state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+    $("#cartTotal").textContent=cuotas(total);
+    persist();
   }
 
-  // Eventos carrito
-  cartItems.onclick = (e) => {
-    const t = e.target;
-    if (t.matches("[data-inc]")) {
-      const item = state.cart.find(i=>i.id==t.dataset.inc); item.qty++; persistCart(); drawCart();
-    }
-    if (t.matches("[data-dec]")) {
-      const item = state.cart.find(i=>i.id==t.dataset.dec); if(item.qty>1) item.qty--; persistCart(); drawCart();
-    }
+  function openCart(){$("#cartDrawer").classList.add("open");$("#backdrop").classList.add("show");}
+  function closeCart(){$("#cartDrawer").classList.remove("open");$("#backdrop").classList.remove("show");}
+
+  $("#openCart").onclick=openCart;
+  $("#closeCart").onclick=closeCart;
+  $("#backdrop").onclick=closeCart;
+  $("#clearCart").onclick=()=>{state.cart=[];persist();drawCart();}
+  $("#checkoutBtn").onclick=()=>{
+    if(!state.cart.length)return alert("Carrito vacío");
+    const lines=state.cart.map(i=>`• ${i.name} x${i.qty} — ${cuotas(i.price)}`).join("%0A");
+    const total=state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+    const msg=`Hola Nahuel, quiero comprar:%0A${lines}%0ATotal en 4 cuotas: ${cuotas(total)}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
   };
-  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); }
-  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); }
-  $("#openCart").addEventListener("click", openCart);
-  $("#closeCart").addEventListener("click", closeCart);
-  $("#backdrop").addEventListener("click", closeCart);
 
-  $("#checkoutBtn").addEventListener("click", ()=>{
-    if(!state.cart.length) return alert("El carrito está vacío.");
-    let lines = state.cart.map(i => `• ${i.name} x${i.qty} — 4 cuotas de ${money(cuota4(i.price))}`).join("%0A");
-    let msg = `Hola Nahuel, quiero comprar:%0A${lines}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
-  });
+  $("#whatsFloating").href=`https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
+  document.getElementById("year").textContent=new Date().getFullYear();
 
-  // Init
-  persistCart(); drawCart(); render();
-  document.getElementById("year").textContent = new Date().getFullYear();
+  persist();drawCart();render();
   </script>
 </body>
 </html>
-
