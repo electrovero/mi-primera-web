@@ -4,15 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nahuel Electrohogar | Tienda de Electrodomésticos</title>
-
-  <!-- SEO básico -->
-  <meta name="description" content="Electrodomésticos con envío a todo el país. Heladeras, lavarropas, TV, cocinas y más.">
-  <meta property="og:title" content="Nahuel Electrohogar">
-  <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
-  <meta property="og:type" content="website">
-
-  <!-- Estilos -->
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=6" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -29,12 +21,10 @@
   <header class="nav">
     <div class="container nav__inner">
       <a href="#" class="logo">Nahuel<span>Electro</span></a>
-
       <div class="searchbox">
         <input id="searchInput" type="search" placeholder="Buscar: heladera, TV, lavarropas..." />
         <button id="searchBtn">Buscar</button>
       </div>
-
       <button id="openCart" class="cartbtn" aria-label="Abrir carrito">🛒<span id="cartCount" class="badge">0</span></button>
     </div>
   </header>
@@ -52,10 +42,7 @@
           <option value="TV">Smart TV</option>
           <option value="Cocinas">Cocinas</option>
           <option value="Pequeños">Pequeños</option>
-          <option value="Gaming">Gaming</option>
-          <option value="Cuidado Personal">Cuidado Personal</option>
         </select>
-
         <select id="sortBy">
           <option value="relevancia">Ordenar por: Relevancia</option>
           <option value="precio-asc">Precio: menor a mayor</option>
@@ -63,7 +50,6 @@
           <option value="nombre-asc">Nombre A→Z</option>
         </select>
       </div>
-
       <div class="chips" id="promoChips">
         <button class="chip" data-chip="envio">🚚 Envío gratis</button>
         <button class="chip" data-chip="cuotas">💳 6 cuotas</button>
@@ -79,40 +65,6 @@
     <div id="productsGrid" class="grid"></div>
   </main>
 
-  <!-- Confianza / ventajas -->
-  <section class="trust">
-    <div class="container trust__inner">
-      <div class="trust__item">✅ Garantía oficial</div>
-      <div class="trust__item">🚚 Envío a todo el país</div>
-      <div class="trust__item">🔒 Compra segura</div>
-      <div class="trust__item">💬 Atención por WhatsApp</div>
-    </div>
-  </section>
-
-  <!-- Preguntas frecuentes -->
-  <section class="container faq">
-    <h2>Preguntas frecuentes</h2>
-    <details>
-      <summary>¿Hacen envíos a todo el país?</summary>
-      <p>Sí, trabajamos con OCA/Andreani y transporte propio en AMBA.</p>
-    </details>
-    <details>
-      <summary>¿Puedo pagar en cuotas?</summary>
-      <p>3 y 6 cuotas sin interés con bancos adheridos. Consultá promos.</p>
-    </details>
-    <details>
-      <summary>¿Tienen garantía?</summary>
-      <p>Todos los productos cuentan con garantía oficial del fabricante.</p>
-    </details>
-  </section>
-
-  <!-- Contacto -->
-  <section id="contacto" class="container contact">
-    <h2>Contacto</h2>
-    <p>¿Duda puntual? Escribinos por WhatsApp y te respondemos al toque.</p>
-    <a class="btn btn--whatsapp" id="whatsFloating" target="_blank" rel="noreferrer">💬 WhatsApp</a>
-  </section>
-
   <!-- Carrito (drawer) -->
   <aside id="cartDrawer" class="cart">
     <div class="cart__header">
@@ -120,26 +72,8 @@
       <button id="closeCart" aria-label="Cerrar">✕</button>
     </div>
     <div id="cartItems" class="cart__items"></div>
-
     <div class="cart__footer">
       <div class="cart__row">
-        <span>Subtotal</span>
-        <strong id="cartSubtotal">$ 0</strong>
-      </div>
-
-      <!-- Cupón (no se publicita, solo aparece acá) -->
-      <div class="cart__row" style="gap:8px;">
-        <input id="couponInput" type="text" placeholder="¿Tenés cupón?"
-               style="flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:#0c1426; color:var(--text); outline:none;">
-        <button id="applyCoupon" class="btn btn--ghost" type="button">Aplicar</button>
-      </div>
-      <div class="cart__row">
-        <span>Descuento</span>
-        <strong id="cartDiscount">$ 0</strong>
-      </div>
-      <!-- /Cupón -->
-
-      <div class="cart__total">
         <span>Total</span>
         <strong id="cartTotal">$ 0</strong>
       </div>
@@ -152,115 +86,45 @@
   <footer class="footer">
     <div class="container footer__inner">
       <p>© <span id="year"></span> Nahuel Electrohogar</p>
-      <nav>
-        <a href="#contacto">Contacto</a>
-        <a href="#">Términos</a>
-        <a href="#">Privacidad</a>
-      </nav>
     </div>
   </footer>
 
   <script>
-  /* ================== Productos ================== */
+  // ================== Productos de ejemplo ==================
   const PRODUCTS = [
-    /* Catálogo base (podés cambiar precios e imágenes) */
-    { id: 1,  name: "Heladera No Frost 360L Samsung", category: "Heladeras",  price: 699999, img: "./img/heladera-samsung-360l.jpg",  tags: ["envio","cuotas"] },
-    { id: 2,  name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg",  tags: ["cuotas","envio"] },
-    { id: 3,  name: "Microondas BGH 28L Grill Inox", category: "Microondas",  price: 149999, img: "./img/microondas-bgh-28l.jpg",      tags: ["oferta","envio"] },
-    { id: 4,  name: "Smart TV 55\" 4K UHD LG", category: "TV",                 price: 679999, img: "./img/tv-lg-55-4k.jpg",             tags: ["cuotas","oferta"] },
-    { id: 5,  name: "Aire Acondicionado Split 3000W Frío/Calor", category: "Aires", price: 799999, img: "./img/aire-split-3000w.jpg", tags: ["envio"] },
-    { id: 6,  name: "Pava Eléctrica Inox 1.7L", category: "Pequeños",         price: 45999,  img: "./img/pava-inox-17.jpg",            tags: ["oferta"] },
-    { id: 7,  name: "Aspiradora Ciclónica 2000W", category: "Pequeños",       price: 119999, img: "./img/aspiradora-2000w.jpg",        tags: ["cuotas"] },
-    { id: 8,  name: "Licuadora Oster 600W Jarra Vidrio", category: "Pequeños", price: 79999,  img: "./img/licuadora-oster-600w.jpg",   tags: ["envio"] },
-    { id: 9,  name: "Tostadora Eléctrica Philips", category: "Pequeños",      price: 55999,  img: "./img/tostadora-philips.jpg",       tags: ["oferta"] },
-    { id:10,  name: "Plancha a Vapor Philips 2200W", category: "Pequeños",    price: 69999,  img: "./img/plancha-philips-2200w.jpg",   tags: ["envio","cuotas"] },
-    { id:11,  name: "Cocina Orbis 56cm Acero", category: "Cocinas",           price: 459999, img: "./img/cocina-orbis-56cm.jpg",       tags: ["oferta","envio"] },
-
-    /* TVs que subiste */
-    { id:20, name: "TV RCA 50\"",           category: "TV", price: 349999, img: "./img/tv-50-rca.jpg",         tags: ["oferta","envio"] },
-    { id:21, name: "TV Noblex 100\"",       category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg",     tags: ["cuotas","envio"] },
-    { id:22, name: "TV Noblex 75\"",        category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg",      tags: ["oferta","cuotas"] },
-    { id:23, name: "TV Noblex Roku 43\"",   category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg", tags: ["envio"] },
-    { id:24, name: "TV Philips 50\"",       category: "TV", price: 359999, img: "./img/tv-philips-50.jpg",     tags: ["oferta"] },
-    { id:25, name: "TV Philips 65\"",       category: "TV", price: 459999, img: "./img/tv-philips-65.jpg",     tags: ["cuotas","envio"] },
-    { id:26, name: "TV Quint 32\"",         category: "TV", price: 159999, img: "./img/tv-quint-32.jpg",       tags: ["envio"] },
-    { id:27, name: "TV Sharp 50\"",         category: "TV", price: 329999, img: "./img/tv-sharp-50.jpg",       tags: ["oferta"] },
-    { id:28, name: "TV TCL 43\"",           category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg",         tags: ["envio","cuotas"] },
-    { id:29, name: "TV Xiaomi 86\"",        category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg",      tags: ["oferta","cuotas","envio"] }
+    { id: 1, name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
+    { id: 2, name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] }
   ];
 
-  /* ================== Cupones ================== */
-  // AIRESPLIT10: 10% SOLO categoría "Aires" (una vez por cliente)
-  // 10 cupones globales 10% (una sola vez por cliente)
-  const COUPONS = {
-    "AIRESPLIT10": { type: "category", category: "Aires", percent: 0.10 },
-    "MEGA10A": { type: "global", percent: 0.10 },
-    "MEGA10B": { type: "global", percent: 0.10 },
-    "MEGA10C": { type: "global", percent: 0.10 },
-    "MEGA10D": { type: "global", percent: 0.10 },
-    "MEGA10E": { type: "global", percent: 0.10 },
-    "MEGA10F": { type: "global", percent: 0.10 },
-    "MEGA10G": { type: "global", percent: 0.10 },
-    "MEGA10H": { type: "global", percent: 0.10 },
-    "MEGA10I": { type: "global", percent: 0.10 },
-    "MEGA10J": { type: "global", percent: 0.10 }
-  };
-  // Marcar cupón usado por cliente (en este navegador)
-  const isCouponRedeemed = (code) => localStorage.getItem("coupon_redeemed_" + code) === "1";
-  const redeemCoupon = (code)   => localStorage.setItem("coupon_redeemed_" + code, "1");
-
-  /* ================== Config rápida ================== */
   const WHATSAPP_NUMBER = "5491127631167";
 
-  /* ================== Helpers ================== */
-  const $  = (sel) => document.querySelector(sel);
+  // Helpers
+  const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
   const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
-  /* ================== Estado/Render ================== */
-  const grid = $("#productsGrid");
-  let state = {
-    q: "", category: "all", sort: "relevancia",
-    chips: new Set(),
-    cart: JSON.parse(localStorage.getItem("cart") || "[]"),
-    couponCode: null,
-    couponDiscount: 0
-  };
+  // Función de cuota: (precio × 2 + 10%) ÷ 4
+  function cuota4(n){
+    let totalFinanciado = n * 2 * 1.10;
+    return totalFinanciado / 4;
+  }
 
+  // Render productos
+  const grid = $("#productsGrid");
   function productCard(p){
-    const chipBadges = p.tags.map(t => `<span class="badge badge--${t}">${t}</span>`).join("");
     return `
-      <article class="card" data-category="${p.category}">
+      <article class="card">
         <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
-          <div class="price">${money(p.price)}</div>
-          <div class="badges">${chipBadges}</div>
+          <div class="price">4 cuotas de ${money(cuota4(p.price))}</div>
           <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
         </div>
       </article>
     `;
   }
-
-  function applyFilters(list){
-    let res = [...list];
-    if (state.q.trim()){
-      const q = state.q.toLowerCase();
-      res = res.filter(p => (p.name + " " + p.category).toLowerCase().includes(q));
-    }
-    if (state.category !== "all") res = res.filter(p => p.category === state.category);
-    if (state.chips.size) res = res.filter(p => [...state.chips].every(tag => p.tags.includes(tag)));
-    switch(state.sort){
-      case "precio-asc": res.sort((a,b)=>a.price-b.price); break;
-      case "precio-desc": res.sort((a,b)=>b.price-a.price); break;
-      case "nombre-asc": res.sort((a,b)=>a.name.localeCompare(b.name)); break;
-    }
-    return res;
-  }
-
   function render(){
-    const list = applyFilters(PRODUCTS);
-    grid.innerHTML = list.map(productCard).join("") || `<p class="muted">No se encontraron productos.</p>`;
+    grid.innerHTML = PRODUCTS.map(productCard).join("");
     $$("[data-add]").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const id = Number(btn.getAttribute("data-add"));
@@ -270,189 +134,74 @@
     });
   }
 
-  /* ================== Carrito ================== */
-  const cartCount    = $("#cartCount");
-  const cartItems    = $("#cartItems");
-  const cartSubtotal = $("#cartSubtotal");
-  const cartDiscount = $("#cartDiscount");
-  const cartTotal    = $("#cartTotal");
-  const cartDrawer   = $("#cartDrawer");
-  const backdrop     = $("#backdrop");
-
-  const couponInput  = $("#couponInput");
-  const applyCouponBtn = $("#applyCoupon");
+  // Carrito
+  let state = { cart: JSON.parse(localStorage.getItem("cart") || "[]") };
+  const cartCount = $("#cartCount");
+  const cartItems = $("#cartItems");
+  const cartTotal = $("#cartTotal");
+  const cartDrawer = $("#cartDrawer");
+  const backdrop = $("#backdrop");
 
   function addToCart(prod){
     const found = state.cart.find(i=>i.id===prod.id);
     if (found) found.qty += 1;
-    else state.cart.push({ id: prod.id, name: prod.name, category: prod.category, price: prod.price, qty: 1 });
+    else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
     persistCart(); openCart(); drawCart();
-  }
-  function removeFromCart(id){
-    state.cart = state.cart.filter(i=>i.id!==id);
-    persistCart(); drawCart();
-  }
-  function changeQty(id, delta){
-    const item = state.cart.find(i=>i.id===id);
-    if(!item) return;
-    item.qty = Math.max(1, item.qty + delta);
-    persistCart(); drawCart();
   }
   function persistCart(){
     localStorage.setItem("cart", JSON.stringify(state.cart));
     cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
   }
-
-  function calcSubtotal(){
-    return state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
-  }
-
-  // ===== Lógica cupones =====
-  function canApplyCategoryCoupon(coupon){
-    if (coupon.type !== "category") return true;
-    return state.cart.some(i => i.category === coupon.category);
-  }
-  function computeCouponDiscount(coupon){
-    const subtotal = calcSubtotal();
-    if (coupon.type === "global"){
-      return Math.round(subtotal * coupon.percent);
-    } else if (coupon.type === "category"){
-      const catSum = state.cart
-        .filter(i => i.category === coupon.category)
-        .reduce((a,b)=> a + b.price*b.qty, 0);
-      return Math.round(catSum * coupon.percent);
-    }
-    return 0;
-  }
-  function applyCouponCode(rawCode){
-    const code = (rawCode || "").trim().toUpperCase();
-    if (!code) return alert("Ingresá un cupón válido.");
-    const coupon = COUPONS[code];
-    if (!coupon) return alert("Cupón inválido.");
-    if (isCouponRedeemed(code)) return alert("Este cupón ya fue utilizado.");
-
-    if (!canApplyCategoryCoupon(coupon)){
-      return alert(`El cupón aplica solo a la categoría ${coupon.category}. Agregá un producto de esa categoría al carrito.`);
-    }
-    const discount = computeCouponDiscount(coupon);
-    if (discount <= 0) return alert("No hay monto elegible para este cupón.");
-
-    state.couponCode = code;
-    state.couponDiscount = discount;
-    redeemCoupon(code); // 🔒 marca usado en este navegador
-    drawTotals();
-    alert("¡Cupón aplicado!");
-  }
-
-  function drawTotals(){
-    const subtotal = calcSubtotal();
-    let discount = 0;
-
-    // si hay cupón activo, recalcular por si cambió el carrito
-    if (state.couponCode){
-      const coupon = COUPONS[state.couponCode];
-      if (coupon) discount = computeCouponDiscount(coupon);
-      state.couponDiscount = discount;
-    }
-
-    cartSubtotal.textContent = money(subtotal);
-    cartDiscount.textContent = state.couponCode ? `- ${money(discount)}` : money(0);
-    cartTotal.textContent    = money(Math.max(0, subtotal - discount));
-  }
-
   function drawCart(){
     if(!state.cart.length){
       cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
-      state.couponCode = null;
-      state.couponDiscount = 0;
-      drawTotals();
-      persistCart();
+      cartTotal.textContent = money(0);
       return;
     }
     cartItems.innerHTML = state.cart.map(i=>`
       <div class="cartline">
-        <div class="cartline__info">
-          <strong>${i.name}</strong>
-          <span>${money(i.price)}</span>
+        <div>
+          <strong>${i.name}</strong><br>
+          <span>4 cuotas de ${money(cuota4(i.price))} (x${i.qty})</span>
         </div>
-        <div class="cartline__qty">
+        <div>
           <button type="button" data-dec="${i.id}">−</button>
           <span>${i.qty}</span>
           <button type="button" data-inc="${i.id}">+</button>
-          <button type="button" class="link danger" data-del="${i.id}">Quitar</button>
         </div>
       </div>
     `).join("");
 
-    drawTotals();
-    persistCart();
-
-    // Delegación: botones +/−/Quitar
-    cartItems.onclick = (e) => {
-      const t = e.target;
-      if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
-      if (t.matches("[data-dec]")) return changeQty(Number(t.dataset.dec), -1);
-      if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
-    };
-  }
-
-  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); document.body.classList.add("noscroll"); }
-  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); document.body.classList.remove("noscroll"); }
-
-  // WhatsApp checkout
-  function buildWhatsappLink(){
-    if(!state.cart.length) return null;
-    const lines = state.cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
-    const subtotal = calcSubtotal();
-    const discount = state.couponDiscount || 0;
-    const total = Math.max(0, subtotal - discount);
-    const couponLine = state.couponCode ? `%0ACupón: ${state.couponCode} (−${money(discount)})` : "";
-    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ASubtotal: ${money(subtotal)}${couponLine}%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+    const sub = state.cart.reduce((a,b)=>a + cuota4(b.price)*b.qty, 0);
+    cartTotal.textContent = money(sub);
   }
 
   // Eventos carrito
-  $("#checkoutBtn").addEventListener("click", ()=>{
-    const url = buildWhatsappLink();
-    if(!url) return alert("El carrito está vacío.");
-    window.open(url, "_blank");
-  });
-  $("#clearCart").addEventListener("click", ()=>{ state.cart = []; persistCart(); drawCart(); });
+  cartItems.onclick = (e) => {
+    const t = e.target;
+    if (t.matches("[data-inc]")) {
+      const item = state.cart.find(i=>i.id==t.dataset.inc); item.qty++; persistCart(); drawCart();
+    }
+    if (t.matches("[data-dec]")) {
+      const item = state.cart.find(i=>i.id==t.dataset.dec); if(item.qty>1) item.qty--; persistCart(); drawCart();
+    }
+  };
+  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); }
+  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); }
   $("#openCart").addEventListener("click", openCart);
   $("#closeCart").addEventListener("click", closeCart);
   $("#backdrop").addEventListener("click", closeCart);
 
-  // Evento aplicar cupón
-  applyCouponBtn.addEventListener("click", ()=> applyCouponCode(couponInput.value));
-  couponInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") applyCouponCode(couponInput.value); });
-
-  /* ================== Búsqueda / Filtros ================== */
-  $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value || ""; render(); });
-  $("#searchInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ state.q = e.target.value; render(); }});
-  $("#categoryFilter").addEventListener("change", (e)=>{ state.category = e.target.value; render(); });
-  $("#sortBy").addEventListener("change", (e)=>{ state.sort = e.target.value; render(); });
-
-  $$("#promoChips .chip").forEach(ch=>{
-    ch.addEventListener("click", ()=>{
-      const t = ch.dataset.chip;
-      if(state.chips.has(t)) state.chips.delete(t); else state.chips.add(t);
-      ch.classList.toggle("chip--active");
-      render();
-    });
+  $("#checkoutBtn").addEventListener("click", ()=>{
+    if(!state.cart.length) return alert("El carrito está vacío.");
+    let lines = state.cart.map(i => `• ${i.name} x${i.qty} — 4 cuotas de ${money(cuota4(i.price))}`).join("%0A");
+    let msg = `Hola Nahuel, quiero comprar:%0A${lines}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
   });
-  $("#clearChips").addEventListener("click", ()=>{
-    state.chips.clear();
-    $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active"));
-    render();
-  });
-
-  // WhatsApp flotante y año
-  const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
-  $("#whatsFloating").setAttribute("href", wlink);
-  document.getElementById("year").textContent = new Date().getFullYear();
 
   // Init
   persistCart(); drawCart(); render();
+  document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
