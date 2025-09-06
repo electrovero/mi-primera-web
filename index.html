@@ -1,27 +1,34 @@
-<!DOCTYPE html>
+
+    <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nahuel Electrohogar | Tienda de Electrodomésticos</title>
+  <title>Nahuel Electrohogar | Tienda</title>
   <style>
     :root{
       --bg:#f5f7fa; --panel:#ffffff; --card:#ffffff;
       --text:#1f2937; --muted:#6b7280; --border:#e5e7eb;
       --accent:#2563eb; --accent-2:#1e40af; --danger:#dc2626;
     }
+    *{box-sizing:border-box}
     body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--text);background:var(--bg);}
     .container{max-width:1200px;margin:auto;padding:0 16px}
+
     .topbar{background:var(--accent);color:#fff;font-size:14px}
     .topbar__inner{display:flex;justify-content:space-between;align-items:center;padding:6px 0}
-    .nav{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);}
+    .topbar a{color:#fff;text-decoration:none}
+
+    .nav{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:10}
     .nav__inner{display:flex;align-items:center;gap:16px;padding:14px 0}
     .logo{color:var(--accent);font-weight:700;font-size:20px;text-decoration:none}
     .searchbox{display:flex;gap:8px;flex:1}
     .searchbox input{flex:1;border:1px solid var(--border);padding:10px;border-radius:8px}
     .searchbox button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 14px;cursor:pointer}
+    .searchbox button:hover{background:var(--accent-2)}
     .cartbtn{background:#f9fafb;border:1px solid var(--border);padding:8px 12px;border-radius:8px;cursor:pointer;position:relative}
     .badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:50%;padding:2px 6px;font-size:12px}
+
     h1{margin:24px 0 12px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
     .card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 5px rgba(0,0,0,.05);}
@@ -29,11 +36,10 @@
     .card-body{padding:12px;display:flex;flex-direction:column;gap:8px}
     .card-title{margin:0;font-size:16px;font-weight:600}
     .price{font-weight:700;color:var(--accent)}
-    .btn{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}
-    .btn--primary{background:var(--accent);color:#fff}
-    .btn--ghost{background:#f3f4f6;color:var(--text);border:1px solid var(--border)}
-    .btn--danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-    .cart{position:fixed;top:0;right:0;width:400px;max-width:96%;height:100%;background:#fff;border-left:1px solid var(--border);transform:translateX(100%);transition:transform .3s;z-index:100;display:flex;flex-direction:column}
+    .price--old{color:var(--muted);text-decoration:line-through;margin-left:6px;font-weight:600}
+
+    /* Carrito (drawer) */
+    .cart{position:fixed;top:0;right:0;width:420px;max-width:96%;height:100%;background:#fff;border-left:1px solid var(--border);transform:translateX(100%);transition:transform .3s;z-index:100;display:flex;flex-direction:column}
     .cart.open{transform:translateX(0);}
     .cart__header{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border)}
     .cart__items{flex:1;overflow:auto;padding:12px}
@@ -42,8 +48,19 @@
     .cart__footer{border-top:1px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:10px}
     .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:.3s;z-index:90}
     .backdrop.show{opacity:1;visibility:visible}
+
+    .btn{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+    .btn--primary{background:var(--accent);color:#fff}
+    .btn--ghost{background:#f3f4f6;color:var(--text);border:1px solid var(--border)}
+    .btn--danger{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+
     .coupon{display:flex;gap:8px;margin-top:8px}
-    .coupon input{flex:1;border:1px solid var(--border);padding:6px;border-radius:6px}
+    .coupon input{flex:1;border:1px solid var(--border);padding:8px;border-radius:8px}
+    .msg{font-size:13px;padding:8px;border-radius:8px;display:none}
+    .msg--ok{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+    .msg--err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+    .total-row{display:flex;justify-content:space-between;align-items:center}
+    .total-note{font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -82,10 +99,16 @@
         <input id="couponInput" placeholder="Código de cupón" />
         <button id="applyCoupon" class="btn btn--primary">Aplicar</button>
       </div>
-      <div style="display:flex;justify-content:space-between">
+      <div id="couponMsg" class="msg"></div>
+
+      <div class="total-row">
         <span>Total en 4 cuotas</span>
-        <strong id="cartTotal">$0</strong>
+        <div style="text-align:right">
+          <div><strong id="cartTotal">$0</strong></div>
+          <div id="cartTotalNote" class="total-note"></div>
+        </div>
       </div>
+
       <button id="checkoutBtn" class="btn btn--primary">Finalizar compra por WhatsApp</button>
       <button id="clearCart" class="btn btn--ghost">Vaciar carrito</button>
     </div>
@@ -97,108 +120,257 @@
   </footer>
 
   <script>
+  /* ================== Catálogo ================== */
   const PRODUCTS = [
-    { id: 5, name: "Aire Acondicionado Split 3000W", category: "Aires", price: 250000*4, img: "./img/aire-split-3000w.jpg"},
-    { id: 1, name: "Heladera Samsung 360L", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg"},
-    { id: 2, name: "Lavarropas LG 8kg", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg"}
+    // ===== Aires / Heladeras / Lavarropas / Microondas / Cocinas =====
+    { id: 5,  name: "Aire Acondicionado Split 3000W", category: "Aires",       price: 250000*4, img: "./img/aire-split-3000w.jpg" }, // cuota fija 250k
+    { id: 1,  name: "Heladera No Frost 360L Samsung", category: "Heladeras",   price: 699999,   img: "./img/heladera-samsung-360l.jpg" },
+    { id: 2,  name: "Lavarropas Automático 8kg LG",   category: "Lavarropas",  price: 589999,   img: "./img/lavarropas-lg-8kg.jpg" },
+    { id: 3,  name: "Microondas BGH 28L Grill Inox",  category: "Microondas",  price: 149999,   img: "./img/microondas-bgh-28l.jpg" },
+    { id: 11, name: "Cocina Orbis 56cm Acero",        category: "Cocinas",     price: 459999,   img: "./img/cocina-orbis-56cm.jpg" },
+
+    // ===== Pequeños =====
+    { id: 6,  name: "Pava Eléctrica Inox 1.7L",       category: "Pequeños",    price: 45999,    img: "./img/pava-inox-17.jpg" },
+    { id: 7,  name: "Aspiradora Ciclónica 2000W",     category: "Pequeños",    price: 119999,   img: "./img/aspiradora-2000w.jpg" },
+    { id: 8,  name: "Licuadora Oster 600W Vidrio",    category: "Pequeños",    price: 79999,    img: "./img/licuadora-oster-600w.jpg" },
+    { id: 9,  name: "Tostadora Eléctrica Philips",    category: "Pequeños",    price: 55999,    img: "./img/tostadora-philips.jpg" },
+    { id: 10, name: "Plancha a Vapor Philips 2200W",  category: "Pequeños",    price: 69999,    img: "./img/plancha-philips-2200w.jpg" },
+
+    // ===== TVs =====
+    { id: 20, name: "TV RCA 50\"",         category: "TV", price: 349999, img: "./img/tv-50-rca.jpg" },
+    { id: 21, name: "TV Noblex 100\"",     category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg" },
+    { id: 22, name: "TV Noblex 75\"",      category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg" },
+    { id: 23, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg" },
+    { id: 24, name: "TV Philips 50\"",     category: "TV", price: 359999, img: "./img/tv-philips-50.jpg" },
+    { id: 25, name: "TV Philips 65\"",     category: "TV", price: 459999, img: "./img/tv-philips-65.jpg" },
+    { id: 26, name: "TV Quint 32\"",       category: "TV", price: 159999, img: "./img/tv-quint-32.jpg" },
+    { id: 27, name: "TV Sharp 50\"",       category: "TV", price: 329999, img: "./img/tv-sharp-50.jpg" },
+    { id: 28, name: "TV TCL 43\"",         category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg" },
+    { id: 29, name: "TV Xiaomi 86\"",      category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg" }
   ];
 
+  /* ================== Config ================== */
   const WHATSAPP_NUMBER = "5491127631167";
-  const $ = (s)=>document.querySelector(s);
-  const $$=(s)=>document.querySelectorAll(s);
+
+  /* ================== Helpers ================== */
+  const $  = (s)=>document.querySelector(s);
+  const $$ = (s)=>document.querySelectorAll(s);
   const money = (n)=> n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
+  // Fórmula general cuotas: (precio × 2 + 10%) ÷ 4
   const cuota4 = (precio)=> (precio*2*1.10)/4;
-  const cuotaTxt = (precio)=> `4 cuotas de ${money(cuota4(precio))}`;
+
+  // Precio base por cuota (antes de cupones)
+  function baseCuota(prod){
+    if (prod.id === 5) return 250000; // Aire Split fijo a $250.000 por cuota
+    return cuota4(prod.price);
+  }
+
+  /* ================== Sistema de cupones ================== */
+  // Tipos:
+  //  - overridePerCuota: fija el valor de la cuota para un producto
+  //  - percent product/category/cart: % OFF (usar negativo, ej -10)
+  const COUPONS = {
+    AIRESPLIT10:       { type: "overridePerCuota", productId: 5, cuota: 240000 }, // Aire Split a 240k la cuota
+    TODO5:             { type: "percent", scope: "cart", percent: -5 },
+    HELA10:            { type: "percent", scope: "category", category: "Heladeras", percent: -10 },
+    PEQ15:             { type: "percent", scope: "category", category: "Pequeños", percent: -15 },
+    TVPHILIPS50_5OFF:  { type: "percent", scope: "product", productId: 24, percent: -5 },
+    NOBLEX100_8OFF:    { type: "percent", scope: "product", productId: 21, percent: -8 },
+    PRIMERACOMPRA10:   { type: "percent", scope: "cart", percent: -10 }
+  };
+
+  // Persistencia de cupones usados (una vez por navegador)
+  const USED_KEY = "usedCoupons";
+  function getUsedCoupons(){ try{return JSON.parse(localStorage.getItem(USED_KEY)||"[]");}catch{return []}; }
+  function markCouponUsed(code){
+    const used = new Set(getUsedCoupons());
+    used.add(code.toUpperCase());
+    localStorage.setItem(USED_KEY, JSON.stringify([...used]));
+  }
+  function isCouponUsed(code){ return getUsedCoupons().includes((code||"").toUpperCase()); }
 
   let appliedCoupon = null;
 
-  function productCard(p){
-    let precioTxt = p.id===5 ? `4 cuotas de ${money(250000)}` : cuotaTxt(p.price);
-    if(appliedCoupon==="AIRESPLIT10" && p.id===5){
-      precioTxt = `4 cuotas de ${money(240000)}`;
+  function priceWithCouponPerItem(prod){
+    let cuota = baseCuota(prod);
+    const c = COUPONS[appliedCoupon || ""]; if(!c) return cuota;
+    if (isCouponUsed(appliedCoupon)) return cuota;
+
+    if (c.type==="overridePerCuota" && c.productId===prod.id) return c.cuota;
+    if (c.type==="percent"){
+      if (c.scope==="product" && c.productId===prod.id)       return cuota*(1+c.percent/100);
+      if (c.scope==="category" && c.category===prod.category) return cuota*(1+c.percent/100);
+      // carrito se aplica en el total
     }
+    return cuota;
+  }
+
+  function totalWithCoupon(cartItems){
+    let subtotal = 0;
+    for (const i of cartItems){
+      const p = PRODUCTS.find(x=>x.id===i.id);
+      if (!p) continue;
+      subtotal += priceWithCouponPerItem(p) * i.qty;
+    }
+    const c = COUPONS[appliedCoupon || ""]; if(!c) return { total: subtotal, note: "" };
+    if (isCouponUsed(appliedCoupon)) return { total: subtotal, note: "(cupón ya utilizado)" };
+
+    if (c.type==="percent" && c.scope==="cart"){
+      const tot = subtotal*(1+c.percent/100);
+      const diff = subtotal - tot;
+      return { total: tot, note:`Incluye ${Math.abs(c.percent)}% OFF carrito (ahorro ${money(diff)})` };
+    }
+    return { total: subtotal, note: "" };
+  }
+
+  /* ================== Render productos ================== */
+  function productCard(p){
+    const cuotaBase = baseCuota(p);
+    const cuotaConCupon = priceWithCouponPerItem(p);
+    const showOld = Math.round(cuotaConCupon) < Math.round(cuotaBase);
     return `
       <article class="card">
-        <img src="${p.img}" alt="${p.name}" class="card-img">
+        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
-          <div class="price">${precioTxt}</div>
+          <div class="price">4 cuotas de ${money(cuotaConCupon)} ${showOld?`<span class="price--old">${money(cuotaBase)}</span>`:""}</div>
           <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
         </div>
-      </article>
-    `;
+      </article>`;
   }
 
   function renderProducts(){
-    const list = PRODUCTS;
-    $("#productsGrid").innerHTML = list.map(productCard).join("");
+    const q = ($("#searchInput").value||"").toLowerCase().trim();
+    const list = PRODUCTS.filter(p => (p.name+" "+p.category).toLowerCase().includes(q));
+    $("#productsGrid").innerHTML = list.map(productCard).join("") || `<p class="muted">No se encontraron productos.</p>`;
     $$("[data-add]").forEach(btn=>{
-      btn.onclick=()=>{
-        const id=Number(btn.dataset.add);
-        const prod=PRODUCTS.find(p=>p.id===id);
-        addToCart(prod);
-      };
+      btn.addEventListener("click", ()=>{
+        const id = Number(btn.dataset.add);
+        const prod = PRODUCTS.find(p=>p.id===id);
+        if (prod) addToCart(prod);
+      });
     });
   }
 
-  let state={cart:JSON.parse(localStorage.getItem("cart")||"[]")};
-  const cartItems=$("#cartItems"),cartTotal=$("#cartTotal");
+  /* ================== Carrito ================== */
+  let state = { cart: JSON.parse(localStorage.getItem("cart")||"[]") };
+  const cartCount  = $("#cartCount");
+  const cartItems  = $("#cartItems");
+  const cartTotal  = $("#cartTotal");
+  const cartNote   = $("#cartTotalNote");
+  const cartDrawer = $("#cartDrawer");
+  const backdrop   = $("#backdrop");
 
-  function persist(){ localStorage.setItem("cart",JSON.stringify(state.cart)); $("#cartCount").textContent=state.cart.reduce((a,b)=>a+b.qty,0);}
-  function addToCart(prod){const f=state.cart.find(i=>i.id===prod.id);if(f)f.qty+=1;else state.cart.push({...prod,qty:1});persist();drawCart();openCart();}
-  function removeItem(id){state.cart=state.cart.filter(i=>i.id!==id);persist();drawCart();}
-  function changeQty(id,d){const it=state.cart.find(i=>i.id===id);if(!it)return;it.qty=Math.max(1,it.qty+d);persist();drawCart();}
-
-  function priceCuota(p){
-    if(p.id===5){
-      if(appliedCoupon==="AIRESPLIT10") return 240000;
-      return 250000;
-    }
-    return cuota4(p.price);
+  function persist(){
+    localStorage.setItem("cart", JSON.stringify(state.cart));
+    cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
+  }
+  function addToCart(prod){
+    const found = state.cart.find(i=>i.id===prod.id);
+    if(found) found.qty+=1; else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+    persist(); drawCart(); openCart();
+  }
+  function removeItem(id){
+    state.cart = state.cart.filter(i=>i.id!==id);
+    persist(); drawCart();
+  }
+  function changeQty(id, d){
+    const it = state.cart.find(i=>i.id===id);
+    if(!it) return;
+    it.qty = Math.max(1, it.qty + d);
+    persist(); drawCart();
   }
 
   function drawCart(){
-    if(!state.cart.length){cartItems.innerHTML="<p>Carrito vacío</p>";cartTotal.textContent=money(0);return;}
-    cartItems.innerHTML=state.cart.map(i=>`
-      <div class="cartline">
-        <div><b>${i.name}</b><br><small>4 cuotas de ${money(priceCuota(i))}</small></div>
-        <div class="cartline__qty">
-          <button class="btn btn--ghost" data-dec="${i.id}">−</button>
-          <span>${i.qty}</span>
-          <button class="btn btn--ghost" data-inc="${i.id}">+</button>
-          <button class="btn btn--danger" data-del="${i.id}">Quitar</button>
-        </div>
-      </div>`).join("");
-    const total=state.cart.reduce((a,b)=>a+priceCuota(b)*b.qty,0);
-    cartTotal.textContent=money(total);
+    if(!state.cart.length){
+      cartItems.innerHTML = `<p class="muted">Carrito vacío</p>`;
+      cartTotal.textContent = money(0);
+      cartNote.textContent = "";
+      persist(); return;
+    }
+    cartItems.innerHTML = state.cart.map(i=>{
+      const p = PRODUCTS.find(x=>x.id===i.id);
+      const cuota = p ? priceWithCouponPerItem(p) : 0;
+      return `
+        <div class="cartline">
+          <div>
+            <b>${i.name}</b><br><small>4 cuotas de ${money(cuota)}</small>
+          </div>
+          <div class="cartline__qty">
+            <button class="btn btn--ghost" data-dec="${i.id}">−</button>
+            <span>${i.qty}</span>
+            <button class="btn btn--ghost" data-inc="${i.id}">+</button>
+            <button class="btn btn--danger" data-del="${i.id}">Quitar</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    const { total, note } = totalWithCoupon(state.cart);
+    cartTotal.textContent = money(total);
+    cartNote.textContent  = note || "";
+    persist();
   }
 
-  cartItems.onclick=e=>{
-    if(e.target.dataset.inc)changeQty(Number(e.target.dataset.inc),1);
-    if(e.target.dataset.dec)changeQty(Number(e.target.dataset.dec),-1);
-    if(e.target.dataset.del)removeItem(Number(e.target.dataset.del));
-  };
+  cartItems.addEventListener("click",(e)=>{
+    const t = e.target;
+    if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
+    if (t.matches("[data-dec]")) return changeQty(Number(t.dataset.dec), -1);
+    if (t.matches("[data-del]")) return removeItem(Number(t.dataset.del));
+  });
 
-  function openCart(){cartDrawer.classList.add("open");backdrop.classList.add("show");}
-  function closeCart(){cartDrawer.classList.remove("open");backdrop.classList.remove("show");}
-  $("#openCart").onclick=openCart;$("#closeCart").onclick=closeCart;$("#backdrop").onclick=closeCart;
-  $("#clearCart").onclick=()=>{state.cart=[];persist();drawCart();};
+  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); }
+  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); }
 
-  $("#applyCoupon").onclick=()=>{
-    appliedCoupon=$("#couponInput").value.trim();
-    drawCart();renderProducts();
-  };
+  $("#openCart").addEventListener("click", openCart);
+  $("#closeCart").addEventListener("click", closeCart);
+  $("#backdrop").addEventListener("click", closeCart);
+  $("#clearCart").addEventListener("click", ()=>{ state.cart=[]; persist(); drawCart(); });
 
-  $("#checkoutBtn").onclick=()=>{
-    if(!state.cart.length)return alert("El carrito está vacío.");
-    const lines=state.cart.map(i=>`• ${i.name} x${i.qty} — 4 cuotas de ${money(priceCuota(i))}`).join("%0A");
-    const total=state.cart.reduce((a,b)=>a+priceCuota(b)*b.qty,0);
-    const msg=`Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal en 4 cuotas: ${money(total)}`;
+  /* ================== Cupón ================== */
+  function setCouponMsg(text, ok){
+    const el = $("#couponMsg");
+    el.textContent = text;
+    el.className = "msg " + (ok ? "msg--ok" : "msg--err");
+    el.style.display = "block";
+  }
+  function clearCouponMsg(){ const el = $("#couponMsg"); el.style.display="none"; el.textContent=""; }
+
+  $("#applyCoupon").addEventListener("click", ()=>{
+    clearCouponMsg();
+    const code = ($("#couponInput").value||"").trim().toUpperCase();
+    if(!code)        return setCouponMsg("Ingresá un código de cupón.", false);
+    if(!COUPONS[code]) return setCouponMsg("Cupón inválido.", false);
+    if(isCouponUsed(code)) return setCouponMsg("Ese cupón ya fue usado.", false);
+
+    appliedCoupon = code;
+    setCouponMsg("Cupón aplicado.", true);
+    renderProducts(); drawCart();
+  });
+
+  /* ================== Checkout via WhatsApp ================== */
+  const WHATSAPP_NUMBER = "5491127631167";
+  function pricePerItemForMsg(i){
+    const p = PRODUCTS.find(x=>x.id===i.id);
+    return p ? priceWithCouponPerItem(p) : 0;
+  }
+  $("#checkoutBtn").addEventListener("click", ()=>{
+    if(!state.cart.length) return alert("El carrito está vacío.");
+    const lines = state.cart.map(i=>`• ${i.name} x${i.qty} — 4 cuotas de ${money(pricePerItemForMsg(i))}`).join("%0A");
+    const { total } = totalWithCoupon(state.cart);
+    const note = appliedCoupon && !isCouponUsed(appliedCoupon) ? `%0A(Cupón aplicado: ${appliedCoupon})` : "";
+    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal en 4 cuotas: ${money(total)}${note}`;
+
+    if(appliedCoupon && !isCouponUsed(appliedCoupon)) markCouponUsed(appliedCoupon);
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
-  };
+  });
 
-  document.getElementById("year").textContent=new Date().getFullYear();
-  renderProducts();persist();drawCart();
+  /* ================== Búsqueda ================== */
+  $("#searchBtn").addEventListener("click", renderProducts);
+  $("#searchInput").addEventListener("keydown",(e)=>{ if(e.key==="Enter") renderProducts(); });
+
+  /* ================== Init ================== */
+  document.getElementById("year").textContent = new Date().getFullYear();
+  renderProducts(); drawCart();
   </script>
 </body>
 </html>
