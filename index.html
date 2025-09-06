@@ -11,34 +11,10 @@
   <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
   <meta property="og:type" content="website">
 
-  <!-- Estilos (usá tu style.css existente) -->
-  <link rel="stylesheet" href="style.css?v=coupon-manual" />
+  <!-- Estilos -->
+  <link rel="stylesheet" href="style.css?v=7" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <!-- Estilos mínimos para modal (si ya están en tu CSS, podés quitar este bloque) -->
-  <style>
-    .modal{ position: fixed; inset: 0; z-index: 120; display: none; place-items: center; }
-    .modal.show{ display: grid; }
-    .modal__content{
-      background: var(--card, #111827); border: 1px solid var(--border, #1f2937); border-radius: 16px;
-      width: min(920px, 96vw); max-height: 92vh; overflow: hidden;
-      display: grid; grid-template-columns: 1fr; gap: 0;
-    }
-    @media(min-width: 860px){ .modal__content{ grid-template-columns: 1.1fr 1fr; } }
-    .modal__img{ width:100%; height:100%; max-height:60vh; object-fit:cover; display:block; background:#111; }
-    .modal__body{ padding:16px; display:flex; flex-direction:column; gap:12px; }
-    .modal__title{ margin:0; font-size:20px; }
-    .modal__price{ font-size:18px; font-weight:700; }
-    .modal__desc{ color: var(--muted, #9ca3af); line-height:1.5; }
-    .modal__actions{ display:flex; gap:8px; flex-wrap:wrap; }
-    .modal__close{
-      position:absolute; top:10px; right:10px;
-      background:#0c1426; border:1px solid var(--border, #1f2937); color:var(--text, #e5e7eb);
-      border-radius:10px; padding:6px 10px; cursor:pointer;
-    }
-    #modalBackdrop{ z-index:110; }
-  </style>
 </head>
 <body>
   <!-- Top bar -->
@@ -54,7 +30,7 @@
     <div class="container nav__inner">
       <a href="#" class="logo">Nahuel<span>Electro</span></a>
 
-    <div class="searchbox">
+      <div class="searchbox">
         <input id="searchInput" type="search" placeholder="Buscar: heladera, TV, lavarropas..." />
         <button id="searchBtn">Buscar</button>
       </div>
@@ -69,7 +45,15 @@
       <div class="selects">
         <select id="categoryFilter">
           <option value="all">Todas las categorías</option>
-          <!-- Se completa solo -->
+          <option value="Heladeras">Heladeras</option>
+          <option value="Lavarropas">Lavarropas</option>
+          <option value="Microondas">Microondas</option>
+          <option value="Aires">Aires Acond.</option>
+          <option value="TV">Smart TV</option>
+          <option value="Cocinas">Cocinas</option>
+          <option value="Pequeños">Pequeños</option>
+          <option value="Gaming">Gaming</option>
+          <option value="Cuidado Personal">Cuidado Personal</option>
         </select>
 
         <select id="sortBy">
@@ -141,51 +125,19 @@
         <span>Subtotal</span>
         <strong id="cartSubtotal">$ 0</strong>
       </div>
-
-      <!-- Descuento: se muestra solo si aplica -->
-      <div class="cart__row" id="discountRow" style="display:none">
-        <span>Descuento</span>
-        <strong id="cartDiscount">- $ 0</strong>
+      <div class="cart__row">
+        <span>Envío</span>
+        <span>Se coordina</span>
       </div>
-
       <div class="cart__total">
         <span>Total</span>
         <strong id="cartTotal">$ 0</strong>
       </div>
-
-      <!-- Campo de cupón (manual) -->
-      <div style="margin-top:10px">
-        <input id="couponInput" type="text" placeholder="Código de descuento" autocomplete="off" style="width:100%;padding:8px;border-radius:8px;border:1px solid #444;background:#111;color:#fff">
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button id="applyCouponBtn" class="btn btn--primary">Aplicar cupón</button>
-          <button id="removeCouponBtn" class="btn btn--ghost" style="display:none">Quitar cupón</button>
-        </div>
-        <p id="couponMsg" style="color:#ef4444;margin:6px 0 0;font-size:14px"></p>
-      </div>
-
-      <button id="checkoutBtn" class="btn btn--primary" style="margin-top:12px">Finalizar compra por WhatsApp</button>
+      <button id="checkoutBtn" class="btn btn--primary">Finalizar compra por WhatsApp</button>
       <button id="clearCart" class="btn btn--ghost">Vaciar carrito</button>
     </div>
   </aside>
   <div id="backdrop" class="backdrop"></div>
-
-  <!-- Modal producto -->
-  <div id="modalBackdrop" class="backdrop"></div>
-  <div id="productModal" class="modal">
-    <button id="modalClose" class="modal__close" aria-label="Cerrar">✕</button>
-    <div class="modal__content">
-      <img id="modalImg" alt="" class="modal__img">
-      <div class="modal__body">
-        <h3 id="modalTitle" class="modal__title"></h3>
-        <div id="modalPrice" class="modal__price"></div>
-        <p id="modalDesc" class="modal__desc"></p>
-        <div class="modal__actions">
-          <button id="modalAdd" class="btn btn--primary">Agregar al carrito</button>
-          <button id="modalGoCart" class="btn btn--ghost">Ver carrito</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <footer class="footer">
     <div class="container footer__inner">
@@ -199,72 +151,66 @@
   </footer>
 
   <script>
-  /* ================== Catálogo (ejemplo) ================== */
+  /* ================== Datos de productos ================== */
   const PRODUCTS = [
-    { id: 1,  name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 1000000, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
-    { id: 2,  name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 700000, img: "./img/lavarropas-lg-8kg.jpg", tags: ["cuotas","envio"] },
-    { id: 3,  name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 200000, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
-    { id: 4,  name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 800000, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] }
+    /* ====== Catálogo propio ====== */
+    { id: 1, name: "Heladera No Frost 360L Samsung", category: "Heladeras", price: 699999, img: "./img/heladera-samsung-360l.jpg", tags: ["envio","cuotas"] },
+    { id: 2, name: "Lavarropas Automático 8kg LG Inverter", category: "Lavarropas", price: 589999, img: "./img/lavarropas-lg-8kg.jpg", tags: ["cuotas","envio"] },
+    { id: 3, name: "Microondas BGH 28L Grill Inox", category: "Microondas", price: 149999, img: "./img/microondas-bgh-28l.jpg", tags: ["oferta","envio"] },
+    { id: 4, name: "Smart TV 55\" 4K UHD LG", category: "TV", price: 679999, img: "./img/tv-lg-55-4k.jpg", tags: ["cuotas","oferta"] },
+    { id: 5, name: "Aire Acondicionado Split 3000W Frío/Calor", category: "Aires", price: 799999, img: "./img/aire-split-3000w.jpg", tags: ["envio"] },
+    { id: 6, name: "Pava Eléctrica Inox 1.7L", category: "Pequeños", price: 45999, img: "./img/pava-inox-17.jpg", tags: ["oferta"] },
+    { id: 7, name: "Aspiradora Ciclónica 2000W", category: "Pequeños", price: 119999, img: "./img/aspiradora-2000w.jpg", tags: ["cuotas"] },
+    { id: 8, name: "Licuadora Oster 600W Jarra Vidrio", category: "Pequeños", price: 79999, img: "./img/licuadora-oster-600w.jpg", tags: ["envio"] },
+    { id: 9, name: "Tostadora Eléctrica Philips", category: "Pequeños", price: 55999, img: "./img/tostadora-philips.jpg", tags: ["oferta"] },
+    { id: 10, name: "Plancha a Vapor Philips 2200W", category: "Pequeños", price: 69999, img: "./img/plancha-philips-2200w.jpg", tags: ["envio","cuotas"] },
+    { id: 11, name: "Cocina Orbis 56cm Acero", category: "Cocinas", price: 459999, img: "./img/cocina-orbis-56cm.jpg", tags: ["oferta","envio"] },
+
+    /* ====== TVs propias ====== */
+    { id: 20, name: "TV RCA 50\"", category: "TV", price: 349999, img: "./img/tv-50-rca.jpg", tags: ["oferta","envio"] },
+    { id: 21, name: "TV Noblex 100\"", category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg", tags: ["cuotas","envio"] },
+    { id: 22, name: "TV Noblex 75\"", category: "TV", price: 659999, img: "./img/tv-noblex-75.jpg", tags: ["oferta","cuotas"] },
+    { id: 23, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg", tags: ["envio"] },
+    { id: 24, name: "TV Philips 50\"", category: "TV", price: 359999, img: "./img/tv-philips-50.jpg", tags: ["oferta"] },
+    { id: 25, name: "TV Philips 65\"", category: "TV", price: 459999, img: "./img/tv-philips-65.jpg", tags: ["cuotas","envio"] },
+    { id: 26, name: "TV Quint 32\"", category: "TV", price: 159999, img: "./img/tv-quint-32.jpg", tags: ["envio"] },
+    { id: 27, name: "TV Sharp 50\"", category: "TV", price: 329999, img: "./img/tv-sharp-50.jpg", tags: ["oferta"] },
+    { id: 28, name: "TV TCL 43\"", category: "TV", price: 259999, img: "./img/tv-tcl-43.jpg", tags: ["envio","cuotas"] },
+    { id: 29, name: "TV Xiaomi 86\"", category: "TV", price: 899999, img: "./img/tv-xiaomi-86.jpg", tags: ["oferta","cuotas","envio"] },
+
+    /* ====== Nuevos de MegaElectro (hotlink) ====== */
+    { id: 101, name: "Silla Gamer Star Vision sin Luz", category: "Gaming", price: 115000, img: "https://megaelectro.com.ar/storage/products/G80ApXVt8gQON9L23k7vQ1T92qG3Hq4tP3n48yZq.jpg", tags: ["oferta"] },
+    { id: 102, name: "Plancha Liliana Secca Alizza RPS900", category: "Cuidado Personal", price: 25000, img: "https://megaelectro.com.ar/storage/products/JGZk9z4lkQsdl3oIhZ4cFZLjN6f2Z1u1pD8x90sM.jpg", tags: ["envio"] },
+    { id: 103, name: "Balanza Personal de Baño Azana", category: "Cuidado Personal", price: 10500, img: "https://megaelectro.com.ar/storage/products/Wx9fTt8KkQqjJ1m23NzQbqZ8vQxqk20cL8w9f8vX.jpg", tags: ["oferta"] },
+    { id: 104, name: "Microondas Winco Digital 20 LTS", category: "Microondas", price: 115000, img: "https://megaelectro.com.ar/storage/products/NHf1g2vXcQfQy4cWw7z1Rt6h3Q9t2i0eF9w8nPqU.jpg", tags: ["envio"] },
+    { id: 105, name: "Aire Acondicionado Electra 2600W Inverter Frío/Calor", category: "Aires", price: 480000, img: "https://megaelectro.com.ar/storage/products/Qe82VqX1sN5uTq0m5cW9zNfL7i3gQ7tLkX8d1oXw.jpg", tags: ["cuotas","envio"] },
+    { id: 106, name: "Aire Acondicionado Portátil Electra 3500W ON/OFF", category: "Aires", price: 489000, img: "https://megaelectro.com.ar/storage/products/We1sP9tLkQm6zH1u7Zq3Xf8gPq7tO2jYkL3sM9wX.jpg", tags: ["envio"] },
+    { id: 107, name: "Smart TV Samsung 65\" OLED 4K QN65S90DAGCZB", category: "TV", price: 2800000, img: "https://megaelectro.com.ar/storage/products/Yq9sD7tKkWm2hN8f7Qx1Vq6gTn8jO2pHcR4sX9vM.jpg", tags: ["oferta","cuotas","envio"] },
+    { id: 108, name: "Aspiradora Yelmo AS-3210 1100W con Bolsa y Accesorios 2.5L", category: "Pequeños", price: 52900, img: "https://megaelectro.com.ar/storage/products/Zr8pF1nKqWl5mC7hV2qX9tNfJ4gO7pLxKk2sT6yQ.jpg", tags: ["envio"] }
   ];
 
-  /* ================== Cupones (10%, uso único) ================== */
-  const COUPONS = {
-    "AHORRO10A": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10B": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10C": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10D": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10E": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10F": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10G": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10H": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10I": { type: "percent", value: 10, expires: "2030-12-31" },
-    "AHORRO10J": { type: "percent", value: 10, expires: "2030-12-31" }
-  };
-
   /* ================== Config rápida ================== */
-  const WHATSAPP_NUMBER = "5491127631167"; // tu número sin + ni 00
+  const WHATSAPP_NUMBER = "5491127631167";
 
   /* ================== Helpers ================== */
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
   const money = (n) => n.toLocaleString("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
-  function isExpired(dateStr){ return new Date(dateStr) < new Date(); }
-
-  /* ====== Un solo uso por navegador ====== */
-  const USED_KEY = "usedCoupons";
-  function getUsedCoupons(){ try { return JSON.parse(localStorage.getItem(USED_KEY) || "[]"); } catch { return []; } }
-  function isCodeUsed(code){ return getUsedCoupons().includes(code); }
-  function markCodeUsed(code){
-    if(!code) return;
-    const list = getUsedCoupons();
-    if(!list.includes(code)){
-      list.push(code);
-      localStorage.setItem(USED_KEY, JSON.stringify(list));
-    }
-  }
 
   /* ================== Estado/Render ================== */
   const grid = $("#productsGrid");
-  let state = {
-    q: "", category: "all", sort: "relevancia",
-    chips: new Set(),
-    cart: JSON.parse(localStorage.getItem("cart") || "[]"),
-    coupon: JSON.parse(localStorage.getItem("coupon") || "null") // { code }
-  };
+  let state = { q: "", category: "all", sort: "relevancia", chips: new Set(), cart: JSON.parse(localStorage.getItem("cart") || "[]") };
 
   function productCard(p){
     const chipBadges = p.tags.map(t => `<span class="badge badge--${t}">${t}</span>`).join("");
     return `
       <article class="card">
-        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy" data-view="${p.id}">
+        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
           <div class="price">${money(p.price)}</div>
           <div class="badges">${chipBadges}</div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap">
-            <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
-            <button class="btn btn--ghost" data-view="${p.id}">Ver detalle</button>
-          </div>
+          <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
         </div>
       </article>
     `;
@@ -298,17 +244,6 @@
     });
   }
 
-  /* ================== Descripciones base para modal ================== */
-  function getDesc(p){
-    const base = {
-      "Heladeras": "Eficiencia y capacidad para tu hogar. Garantía oficial.",
-      "Lavarropas": "Tecnología inverter con bajo consumo.",
-      "Microondas": "Cocción rápida y funciones grill.",
-      "TV": "Smart TV con apps y conectividad."
-    };
-    return p.desc || base[p.category] || "Producto de calidad con garantía y soporte.";
-  }
-
   /* ================== Carrito ================== */
   const cartCount = $("#cartCount");
   const cartItems = $("#cartItems");
@@ -320,7 +255,7 @@
   function addToCart(prod){
     const found = state.cart.find(i=>i.id===prod.id);
     if (found) found.qty += 1; else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
-    persistCart(); drawCart();
+    persistCart(); openCart(); drawCart();
   }
   function removeFromCart(id){
     state.cart = state.cart.filter(i=>i.id!==id);
@@ -334,32 +269,14 @@
   }
   function persistCart(){
     localStorage.setItem("cart", JSON.stringify(state.cart));
-    if(state.coupon) localStorage.setItem("coupon", JSON.stringify(state.coupon));
     cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
   }
-
-  function calcDiscount(){
-    const code = state.coupon?.code;
-    if(!code) return { discount: 0, reason: null };
-    if(isCodeUsed(code)) return { discount: 0, reason: "Este cupón ya fue utilizado en este dispositivo." };
-    const rule = COUPONS[code];
-    if(!rule) return { discount: 0, reason: "Cupón inválido." };
-    if(isExpired(rule.expires)) return { discount: 0, reason: "Cupón vencido." };
-
-    const subtotal = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
-    let discount = 0;
-    if(rule.type === "percent") discount = Math.round(subtotal * (rule.value/100));
-    else if(rule.type === "fixed") discount = Math.min(rule.value, subtotal);
-    return { discount, reason: null };
-  }
-
   function drawCart(){
     if(!state.cart.length){
       cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
       cartSubtotal.textContent = money(0);
-      document.getElementById("discountRow").style.display = "none";
-      document.getElementById("cartDiscount").textContent = "- $ 0";
       cartTotal.textContent = money(0);
+      persistCart();
       return;
     }
     cartItems.innerHTML = state.cart.map(i=>`
@@ -379,96 +296,39 @@
 
     const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
     cartSubtotal.textContent = money(sub);
+    cartTotal.textContent = money(sub);
+    persistCart();
 
-    const { discount, reason } = calcDiscount();
-    const discountRow = document.getElementById("discountRow");
-    const cartDiscount = document.getElementById("cartDiscount");
-    const couponMsg = document.getElementById("couponMsg");
-
-    couponMsg.textContent = "";
-    if(state.coupon && discount > 0 && !reason){
-      discountRow.style.display = "flex";
-      cartDiscount.textContent = `- ${money(discount)}`;
-    }else{
-      discountRow.style.display = "none";
-      cartDiscount.textContent = "- $ 0";
-      if(reason) couponMsg.textContent = reason;
-    }
-
-    const total = Math.max(0, sub - (discount || 0));
-    cartTotal.textContent = money(total);
+    // Delegación: botones +/−/Quitar
+    cartItems.onclick = (e) => {
+      const t = e.target;
+      if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
+      if (t.matches("[data-dec]")) return changeQty(Number(t.dataset.dec), -1);
+      if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
+    };
   }
-
-  // Delegación de eventos del carrito
-  cartItems.onclick = (e) => {
-    const t = e.target;
-    if (t.matches("[data-inc]")) return changeQty(Number(t.dataset.inc), +1);
-    if (t.matches("[data-dec]")) return changeQty(Number(t.dataset.dec), -1);
-    if (t.matches("[data-del]")) return removeFromCart(Number(t.dataset.del));
-  };
 
   function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); document.body.classList.add("noscroll"); }
   function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); document.body.classList.remove("noscroll"); }
-  $("#openCart").addEventListener("click", openCart);
-  $("#closeCart").addEventListener("click", closeCart);
-  $("#backdrop").addEventListener("click", closeCart);
 
-  // Aplicar / Quitar cupón (manual)
-  $("#applyCouponBtn").addEventListener("click", ()=>{
-    const code = $("#couponInput").value.trim().toUpperCase();
-    const msg = $("#couponMsg");
-    if(!code){ msg.textContent = "Ingresá un código."; return; }
-    if(isCodeUsed(code)){ msg.textContent = "Este cupón ya fue utilizado en este dispositivo."; return; }
-    const rule = COUPONS[code];
-    if(!rule){ msg.textContent = "Cupón inválido."; return; }
-    if(isExpired(rule.expires)){ msg.textContent = "Cupón vencido."; return; }
-
-    state.coupon = { code };
-    msg.textContent = "";
-    $("#applyCouponBtn").style.display = "none";
-    $("#removeCouponBtn").style.display = "inline-block";
-    persistCart(); drawCart();
-  });
-
-  $("#removeCouponBtn").addEventListener("click", ()=>{
-    state.coupon = null;
-    localStorage.removeItem("coupon");
-    $("#couponInput").value = "";
-    $("#couponMsg").textContent = "";
-    $("#applyCouponBtn").style.display = "inline-block";
-    $("#removeCouponBtn").style.display = "none";
-    drawCart();
-  });
-
-  // Checkout (marca cupón como usado si aplicó descuento)
+  // Checkout WhatsApp
   function buildWhatsappLink(){
     if(!state.cart.length) return null;
     const lines = state.cart.map(i => `• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
-    const subtotal = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
-    const { discount } = calcDiscount();
-    const total = Math.max(0, subtotal - (discount || 0));
-    const couponLine = state.coupon && discount ? `%0ADescuento (${state.coupon.code}): - ${money(discount)}` : "";
-    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ASubtotal: ${money(subtotal)}${couponLine}%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
+    const total = state.cart.reduce((a,b)=>a+b.price*b.qty,0);
+    const msg = `Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal: ${money(total)}%0A%0ADatos de envío:`;
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
   }
 
   $("#checkoutBtn").addEventListener("click", ()=>{
     const url = buildWhatsappLink();
     if(!url) return alert("El carrito está vacío.");
-    const code = state.coupon?.code || null;
-    const { discount } = calcDiscount();
-    if(code && discount > 0){
-      markCodeUsed(code);                 // quema el cupón en este navegador
-      state.coupon = null;
-      localStorage.removeItem("coupon");
-    }
     window.open(url, "_blank");
   });
-
-  $("#clearCart").addEventListener("click", ()=>{
-    state.cart = [];
-    persistCart(); drawCart();
-  });
+  $("#clearCart").addEventListener("click", ()=>{ state.cart = []; persistCart(); drawCart(); });
+  $("#openCart").addEventListener("click", openCart);
+  $("#closeCart").addEventListener("click", closeCart);
+  $("#backdrop").addEventListener("click", closeCart);
 
   /* ================== Búsqueda / Filtros ================== */
   $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value || ""; render(); });
@@ -484,65 +344,19 @@
       render();
     });
   });
-  $("#clearChips").addEventListener("click", ()=>{ state.chips.clear(); $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active")); render(); });
+  $("#clearChips").addEventListener("click", ()=>{
+    state.chips.clear();
+    $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active"));
+    render();
+  });
 
   // WhatsApp flotante y año
   const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
   $("#whatsFloating").setAttribute("href", wlink);
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  /* ===== Modal de producto ===== */
-  let MODAL_PROD = null;
-  const modal = document.getElementById("productModal");
-  const modalBackdrop = document.getElementById("modalBackdrop");
-  function showProduct(p){
-    MODAL_PROD = p;
-    document.getElementById("modalImg").src = p.img;
-    document.getElementById("modalImg").alt = p.name;
-    document.getElementById("modalTitle").textContent = p.name;
-    document.getElementById("modalPrice").textContent = money(p.price);
-    document.getElementById("modalDesc").textContent = getDesc(p);
-    modal.classList.add("show");
-    modalBackdrop.classList.add("show");
-    document.body.classList.add("noscroll");
-  }
-  function hideProduct(){
-    modal.classList.remove("show");
-    modalBackdrop.classList.remove("show");
-    document.body.classList.remove("noscroll");
-    MODAL_PROD = null;
-  }
-  document.getElementById("modalClose").addEventListener("click", hideProduct);
-  modalBackdrop.addEventListener("click", hideProduct);
-  document.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && modal.classList.contains("show")) hideProduct(); });
-  document.getElementById("modalAdd").addEventListener("click", ()=>{ if(!MODAL_PROD) return; addToCart(MODAL_PROD); });
-  document.getElementById("modalGoCart").addEventListener("click", ()=>{ hideProduct(); openCart(); });
-
-  // Abrir modal al click en imagen o botón "Ver detalle"
-  grid.addEventListener("click", (e)=>{
-    const btn = e.target.closest("[data-view]");
-    if(!btn) return;
-    const id = Number(btn.getAttribute("data-view"));
-    const prod = PRODUCTS.find(p => p.id === id);
-    if (prod) showProduct(prod);
-  });
-
-  /* ===== Poblar categorías automáticamente ===== */
-  function populateCategories(){
-    const select = document.getElementById("categoryFilter");
-    [...select.querySelectorAll('option:not([value="all"])')].forEach(o => o.remove());
-    const cats = [...new Set(PRODUCTS.map(p => p.category))].sort((a,b)=>a.localeCompare(b));
-    cats.forEach(cat => {
-      const opt = document.createElement("option");
-      opt.value = cat; opt.textContent = cat;
-      select.appendChild(opt);
-    });
-  }
-
   // Init
-  populateCategories();
   persistCart(); drawCart(); render();
   </script>
 </body>
 </html>
-
