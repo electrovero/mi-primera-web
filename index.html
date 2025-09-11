@@ -10,7 +10,7 @@
   <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
   <meta property="og:type" content="website">
 
-  <link rel="stylesheet" href="style.css?v=11" />
+  <link rel="stylesheet" href="style.css?v=12" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -28,7 +28,7 @@
     <div class="container nav__inner">
       <a href="#" class="logo">Nahuel<span>Electro</span></a>
       <div class="searchbox">
-        <input id="searchInput" type="search" placeholder="Buscar: heladera, TV, lavarropas..." />
+        <input id="searchInput" type="search" placeholder="Buscar productos..." />
         <button id="searchBtn">Buscar</button>
       </div>
       <button id="openCart" class="cartbtn" aria-label="Abrir carrito">🛒<span id="cartCount" class="badge">0</span></button>
@@ -42,18 +42,7 @@
         <select id="categoryFilter">
           <option value="all">Todas las categorías</option>
           <option value="Heladeras">Heladeras</option>
-          <option value="Lavarropas">Lavarropas</option>
-          <option value="Microondas">Microondas</option>
-          <option value="Aires">Aires Acond.</option>
           <option value="TV">Smart TV</option>
-          <option value="Cocinas">Cocinas</option>
-          <option value="Pequeños">Pequeños</option>
-        </select>
-        <select id="sortBy">
-          <option value="relevancia">Ordenar por: Relevancia</option>
-          <option value="precio-asc">Precio: menor a mayor</option>
-          <option value="precio-desc">Precio: mayor a menor</option>
-          <option value="nombre-asc">Nombre A→Z</option>
         </select>
       </div>
     </div>
@@ -91,30 +80,39 @@
   <script>
   /* ================== Productos ================== */
   const PRODUCTS = [
-    { id: 101, name: "Heladera Hisense Side by Side 468L", category: "Heladeras", base: 800000, img: "./img/heladera-hisense.jpg" },
-    { id: 102, name: "Heladera Neba H240Y 239L", category: "Heladeras", base: 500000, img: "./img/heladera-neba-h240y.jpg" },
-    { id: 103, name: "Heladera Neba H300Y 300L", category: "Heladeras", base: 620000, img: "./img/heladera-neba-h300y.jpg" },
-    { id: 104, name: "Heladera Drean HDR370F11S", category: "Heladeras", base: 700000, img: "./img/heladera-drean-hdr370f11s.jpg" },
-    { id: 105, name: "Heladera Philco 175L", category: "Heladeras", base: 420000, img: "./img/heladera-philco-175l.jpg" }
+    // HELADERAS
+    { id: 1, name: "Heladera Hisense 468L Side by Side", category: "Heladeras", price: 1000000, img: "./img/heladera-hisense-468l.jpg" },
+    { id: 2, name: "Heladera Neba H240Y", category: "Heladeras", price: 600000, img: "./img/heladera-neba-h240y.jpg" },
+    { id: 3, name: "Heladera Neba H300Y con dispenser", category: "Heladeras", price: 750000, img: "./img/heladera-neba-h300y.jpg" },
+    { id: 4, name: "Heladera Drean HDR370F11S", category: "Heladeras", price: 820000, img: "./img/heladera-drean-hdr370f11s.jpg" },
+    { id: 5, name: "Heladera Philco 1751", category: "Heladeras", price: 680000, img: "./img/heladera-philco-1751.jpg" },
+
+    // TELEVISORES
+    { id: 10, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg" },
+    { id: 11, name: "TV RCA 50\"", category: "TV", price: 349999, img: "./img/tv-50-rca.jpg" },
+    { id: 12, name: "TV Noblex 100\"", category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg" }
   ];
 
-  /* ================== Config ================== */
+  /* ================== Config rápida ================== */
   const WHATSAPP_NUMBER = "5491127631167";
-  let state = { cart: JSON.parse(localStorage.getItem("cart") || "[]") };
 
   /* ================== Helpers ================== */
-  const $ = s => document.querySelector(s);
-  const money = n => n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
-  const cuota = base => Math.round((base*2)/4);
+  const $ = (s) => document.querySelector(s);
+  const money = (n) => n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
 
-  /* ================== Render ================== */
+  /* ================== Estado ================== */
+  let state = {
+    cart: JSON.parse(localStorage.getItem("cart") || "[]")
+  };
+
+  /* ================== Render Productos ================== */
   function renderProducts(){
     $("#productsGrid").innerHTML = PRODUCTS.map(p=>`
       <article class="card">
         <img src="${p.img}" alt="${p.name}" class="card-img">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
-          <div class="price">4 cuotas de ${money(cuota(p.base))}</div>
+          <div class="price">4 cuotas de ${money(Math.round((p.price*2)/4))}</div>
           <button class="btn btn--primary" onclick="addToCart(${p.id})">Agregar</button>
         </div>
       </article>
@@ -126,12 +124,12 @@
   function addToCart(id){ const prod=PRODUCTS.find(p=>p.id===id); const f=state.cart.find(i=>i.id===id); if(f) f.qty++; else state.cart.push({...prod,qty:1}); persistCart(); drawCart(); openCart(); }
   function removeFromCart(id){ state.cart=state.cart.filter(i=>i.id!==id); persistCart(); drawCart(); }
   function changeQty(id,d){ const it=state.cart.find(i=>i.id===id); if(!it) return; it.qty=Math.max(1,it.qty+d); persistCart(); drawCart(); }
-  function subtotal(){ return state.cart.reduce((a,b)=>a+(cuota(b.base)*b.qty),0); }
+  function subtotal(){ return state.cart.reduce((a,b)=>a+b.price*b.qty,0); }
 
   function drawCart(){
     $("#cartItems").innerHTML = state.cart.length? state.cart.map(i=>`
       <div class="cartline">
-        <div class="cartline__info"><strong>${i.name}</strong><span>4 cuotas de ${money(cuota(i.base))}</span></div>
+        <div class="cartline__info"><strong>${i.name}</strong><span>${money(i.price)}</span></div>
         <div class="cartline__qty">
           <button onclick="changeQty(${i.id},-1)">-</button><span>${i.qty}</span><button onclick="changeQty(${i.id},1)">+</button>
           <button onclick="removeFromCart(${i.id})" class="link danger">Quitar</button>
@@ -145,7 +143,7 @@
   /* ================== WhatsApp ================== */
   $("#checkoutBtn").addEventListener("click",()=>{
     if(!state.cart.length) return alert("Carrito vacío");
-    const lines=state.cart.map(i=>`• ${i.name} x${i.qty} — 4 cuotas de ${money(cuota(i.base))}`).join("%0A");
+    const lines=state.cart.map(i=>`• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
     const total=$("#cartTotal").textContent;
     const msg=`Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal: ${total}`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
@@ -165,6 +163,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
