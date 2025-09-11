@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Nahuel Electrohogar | Tienda</title>
 
-  <meta name="description" content="Electrodomésticos en 4 cuotas. Heladeras, TV, aires y más.">
+  <meta name="description" content="Electrodomésticos en 4 cuotas. Heladeras, aires y más.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -38,6 +38,7 @@
     .filters{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#0b1220}
     .filters__inner{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
     .selects select{background:#0c1426;border:1px solid var(--border);color:var(--text);padding:10px;border-radius:10px;outline:none}
+    .muted{color:var(--muted)}
 
     h1{margin:24px 0 12px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(1,1fr)}
@@ -74,7 +75,6 @@
     .backdrop{ position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease; z-index:90; }
     .backdrop.show{ opacity:1; visibility:visible; }
 
-    .muted{color:var(--muted)}
     .discount-line{display:flex;justify-content:space-between;color:#a7f3d0}
     .coupon-ok{color:#34d399;font-weight:600}
     .coupon-bad{color:#f87171}
@@ -92,7 +92,7 @@
     <div class="container nav__inner">
       <a href="#" class="logo">Nahuel<span>Electro</span></a>
       <div class="searchbox">
-        <input id="searchInput" type="search" placeholder="Buscar: heladera, TV, lavarropas..." />
+        <input id="searchInput" type="search" placeholder="Buscar: heladera, aire..." />
         <button id="searchBtn">Buscar</button>
       </div>
       <button id="openCart" class="cartbtn" aria-label="Abrir carrito">🛒<span id="cartCount" class="badge">0</span></button>
@@ -105,12 +105,7 @@
         <select id="categoryFilter">
           <option value="all">Todas las categorías</option>
           <option value="Heladeras">Heladeras</option>
-          <option value="Lavarropas">Lavarropas</option>
-          <option value="Microondas">Microondas</option>
           <option value="Aires">Aires Acond.</option>
-          <option value="TV">Smart TV</option>
-          <option value="Cocinas">Cocinas</option>
-          <option value="Pequeños">Pequeños</option>
         </select>
         <select id="sortBy">
           <option value="relevancia">Ordenar por: Relevancia</option>
@@ -124,7 +119,7 @@
   </section>
 
   <main class="container">
-    <h1>Ofertas destacadas</h1>
+    <h1>Productos</h1>
     <div id="productsGrid" class="grid"></div>
   </main>
 
@@ -159,48 +154,31 @@ const $  = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const money = n => n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
 
-/* ====== Productos (cash = precio base; se muestra SOLO 4 cuotas) ======
-   cuota = Math.round(cash * 0.5)  -> total = cash * 2
+/* ====== Productos (solo mostramos 4 cuotas)
+   - cash = precio base
+   - cuota base = Math.round(cash * 0.5)   (total = cash * 2)
 */
 const PRODUCTS = [
-  // Aire para cupón especial (4×$250.000 por defecto)
-  { id: 4,  name: "Aire Acond. Split 3000W", category: "Aires",     cash: 500000,  img: "./img/aire-split-3000w.jpg" },
+  // Aire con cupón especial
+  { id: 4, name: "Aire Acond. Split 3000W", category: "Aires", cash: 500000, img: "./img/aire-split-3000w.jpg" },
 
-  // Algunos básicos de ejemplo (mantené/ajustá los que uses)
-  { id: 1,  name: "Heladera Samsung 360L",   category: "Heladeras", cash: 699999,  img: "./img/heladera-samsung-360l.jpg" },
-  { id: 2,  name: "Lavarropas LG 8kg",       category: "Lavarropas",cash: 589999,  img: "./img/lavarropas-lg-8kg.jpg" },
-  { id: 3,  name: "Microondas BGH 28L",      category: "Microondas",cash: 149999,  img: "./img/microondas-bgh-28l.jpg" },
-  { id: 5,  name: "Smart TV LG 55\"",        category: "TV",        cash: 679999,  img: "./img/tv-lg-55-4k.jpg" },
-
-  // ===== Heladeras del ZIP (agregá las fotos a /img/ con estos nombres) =====
+  // Tus HELADERAS del ZIP
   { id: 120, name: "Heladera Neba H240y",                   category: "Heladeras", cash: 699999, img: "./img/heladera-neba-h240y.jpg" },
-  { id: 121, name: "Heladera Neba H300y Con Dispenser",     category: "Heladeras", cash: 699999, img: "./img/heladera-neba-h300y-con-dispenser.jpg" },
-  { id: 122, name: "Heladera Philco 175L",                  category: "Heladeras", cash: 699999, img: "./img/heladera-philco-175l.jpg" },
-  { id: 123, name: "Heladera Drean HDR370F11S",             category: "Heladeras", cash: 699999, img: "./img/heladera-drean-hdr370f11s.jpg" },
-  { id: 124, name: "Heladera Hisense Side By Side 468L",    category: "Heladeras", cash: 999999, img: "./img/heladera-hisense-side-by-side.jpg" } // podés ajustar cash
+  { id: 121, name: "Heladera Neba H300y Con Dispenser",     category: "Heladeras", cash: 739999, img: "./img/heladera-neba-h300y-con-dispenser.jpg" },
+  { id: 122, name: "Heladera Philco 175L",                  category: "Heladeras", cash: 549999, img: "./img/heladera-philco-175l.jpg" },
+  { id: 123, name: "Heladera Drean HDR370F11S",             category: "Heladeras", cash: 759999, img: "./img/heladera-drean-hdr370f11s.jpg" },
+  { id: 124, name: "Heladera Hisense Side By Side 468L",    category: "Heladeras", cash: 1199999, img: "./img/heladera-hisense-side-by-side.jpg" }
 ];
 
 /* ====== Cupones ======
-   - percent: {type:'percent', value:10}
-   - fixed:   {type:'fixed', value:30000}
+   - percent (descuento %)
+   - fixed   (descuento fijo)
    - installment_override: fija la CUOTA de un producto (targetId)
 */
 const COUPONS = {
-  "AIRESPLIT10": { type: "installment_override", targetId: 4, value: 240000, note:"Aire 4×$240.000" },
-
-  "VERO5":   { type:"percent", value:5,  note:"5% OFF en el total" },
-  "VERO10":  { type:"percent", value:10, note:"10% OFF en el total" },
-  "PROMO7":  { type:"percent", value:7,  note:"7% OFF en el total" },
-
-  "MEGA15K": { type:"fixed", value:15000, note:"$15.000 OFF" },
-  "MEGA30K": { type:"fixed", value:30000, note:"$30.000 OFF" },
-  "SAVE50K": { type:"fixed", value:50000, note:"$50.000 OFF" },
-
-  "EXTRA3":  { type:"percent", value:3,  note:"3% OFF" },
-  "EXTRA8":  { type:"percent", value:8,  note:"8% OFF" },
-  "EXTRA12": { type:"percent", value:12, note:"12% OFF" }
+  "AIRESPLIT10": { type: "installment_override", targetId: 4, value: 240000, note:"Aire 4×$240.000" }
 };
-// Un solo uso por navegador:
+// Un solo uso por navegador
 const USED_KEY = "usedCoupons_v1";
 const getUsed = () => JSON.parse(localStorage.getItem(USED_KEY) || "[]");
 const isUsed  = code => getUsed().includes(code);
@@ -277,7 +255,7 @@ function computeTotals(){
   state.cart.forEach(it=>{
     const p=findProd(it.id); if(!p) return;
     const cuota=itemInstallment(p);
-    subtotal += (cuota*4)*it.qty; // total compra en “4 cuotas”
+    subtotal += (cuota*4)*it.qty; // total “4 cuotas”
   });
 
   let total = subtotal;
@@ -290,7 +268,7 @@ function computeTotals(){
       total -= d; discountLines.push({label:`Cupón ${c.code} (${info.value}% OFF)`, value:`- ${money(d)}`});
     }else if(info.type==="fixed"){
       const d = Math.min(info.value,total);
-      total -= d; discountLines.push({label:`Cupón ${c.code} (${info.note||"Descuento"})`, value:`- ${money(d)}`});
+      total -= d; discountLines.push({label:`Cupón ${c.code}`, value:`- ${money(d)}`});
     }else if(info.type==="installment_override"){
       discountLines.push({label:`Cupón ${c.code} (${info.note})`, value:`incl.`});
     }
@@ -397,6 +375,8 @@ document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
+
+
 
 
 
