@@ -10,7 +10,8 @@
   <meta property="og:description" content="Ofertas, cuotas y envío en Argentina.">
   <meta property="og:type" content="website">
 
-  <link rel="stylesheet" href="style.css?v=12" />
+  <!-- Tu CSS -->
+  <link rel="stylesheet" href="style.css?v=13" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -18,7 +19,7 @@
   <!-- Top bar -->
   <div class="topbar">
     <div class="container topbar__inner">
-      <span>Envíos a todo el país · 4 cuotas sin interés</span>
+      <span>Envíos a todo el país · 4 cuotas</span>
       <a href="#contacto">Ayuda</a>
     </div>
   </div>
@@ -43,7 +44,30 @@
           <option value="all">Todas las categorías</option>
           <option value="Heladeras">Heladeras</option>
           <option value="TV">Smart TV</option>
+          <option value="Freezer">Freezer</option>
+          <option value="Microondas">Microondas</option>
+          <option value="Termotanques">Termotanques</option>
+          <option value="Hornos eléctricos">Hornos eléctricos</option>
+          <option value="Equipos de música">Equipos de música</option>
+          <option value="Cuidado personal">Cuidado personal</option>
+          <option value="Aires">Aires Acond.</option>
+          <option value="Pequeños">Pequeños</option>
+          <option value="Cocinas">Cocinas</option>
         </select>
+
+        <select id="sortBy">
+          <option value="relevancia">Ordenar por: Relevancia</option>
+          <option value="precio-asc">Precio: menor a mayor</option>
+          <option value="precio-desc">Precio: mayor a menor</option>
+          <option value="nombre-asc">Nombre A→Z</option>
+        </select>
+      </div>
+
+      <div class="chips" id="promoChips">
+        <button class="chip" data-chip="envio">🚚 Envío gratis</button>
+        <button class="chip" data-chip="cuotas">💳 4 cuotas</button>
+        <button class="chip" data-chip="oferta">🔥 Oferta</button>
+        <button id="clearChips" class="link">Limpiar</button>
       </div>
     </div>
   </section>
@@ -53,6 +77,23 @@
     <h1>Ofertas destacadas</h1>
     <div id="productsGrid" class="grid"></div>
   </main>
+
+  <!-- Confianza -->
+  <section class="trust">
+    <div class="container trust__inner">
+      <div class="trust__item">✅ Garantía oficial</div>
+      <div class="trust__item">🚚 Envío a todo el país</div>
+      <div class="trust__item">🔒 Compra segura</div>
+      <div class="trust__item">💬 Atención por WhatsApp</div>
+    </div>
+  </section>
+
+  <!-- Contacto -->
+  <section id="contacto" class="container contact">
+    <h2>Contacto</h2>
+    <p>¿Duda puntual? Escribinos por WhatsApp y te respondemos al toque.</p>
+    <a class="btn btn--whatsapp" id="whatsFloating" target="_blank" rel="noreferrer">💬 WhatsApp</a>
+  </section>
 
   <!-- Carrito -->
   <aside id="cartDrawer" class="cart">
@@ -80,17 +121,51 @@
   <script>
   /* ================== Productos ================== */
   const PRODUCTS = [
-    // HELADERAS
-    { id: 1, name: "Heladera Hisense 468L Side by Side", category: "Heladeras", price: 1000000, img: "./img/heladera-hisense-468l.jpg" },
-    { id: 2, name: "Heladera Neba H240Y", category: "Heladeras", price: 600000, img: "./img/heladera-neba-h240y.jpg" },
-    { id: 3, name: "Heladera Neba H300Y con dispenser", category: "Heladeras", price: 750000, img: "./img/heladera-neba-h300y.jpg" },
-    { id: 4, name: "Heladera Drean HDR370F11S", category: "Heladeras", price: 820000, img: "./img/heladera-drean-hdr370f11s.jpg" },
-    { id: 5, name: "Heladera Philco 1751", category: "Heladeras", price: 680000, img: "./img/heladera-philco-1751.jpg" },
+    /* ====== HELADERAS ====== */
+    { id: 1, name: "Heladera Hisense 468L Side by Side", category: "Heladeras", price: 1000000, img: "./img/heladera-hisense-468l.jpg", tags: ["envio","cuotas"] },
+    { id: 2, name: "Heladera Neba H240Y", category: "Heladeras", price: 600000, img: "./img/heladera-neba-h240y.jpg", tags: ["cuotas"] },
+    { id: 3, name: "Heladera Neba H300Y con dispenser", category: "Heladeras", price: 750000, img: "./img/heladera-neba-h300y.jpg", tags: ["envio"] },
+    { id: 4, name: "Heladera Drean HDR370F11S", category: "Heladeras", price: 820000, img: "./img/heladera-drean-hdr370f11s.jpg", tags: ["oferta"] },
+    { id: 5, name: "Heladera Philco 1751", category: "Heladeras", price: 680000, img: "./img/heladera-philco-1751.jpg", tags: ["envio","cuotas"] },
 
-    // TELEVISORES
-    { id: 10, name: "TV Noblex Roku 43\"", category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg" },
-    { id: 11, name: "TV RCA 50\"", category: "TV", price: 349999, img: "./img/tv-50-rca.jpg" },
-    { id: 12, name: "TV Noblex 100\"", category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg" }
+    /* ====== TV ====== */
+    { id: 10, name: 'TV Noblex Roku 43"', category: "TV", price: 289999, img: "./img/tv-noblex-roku-43.jpg", tags: ["envio"] },
+    { id: 11, name: 'TV RCA 50"', category: "TV", price: 349999, img: "./img/tv-50-rca.jpg", tags: ["oferta"] },
+    { id: 12, name: 'TV Noblex 100"', category: "TV", price: 799999, img: "./img/tv-noblex-100.jpg", tags: ["cuotas"] },
+
+    /* ====== FREEZERS ====== */
+    { id: 101, name: "Freezer Briket 280L", category: "Freezer", price: 520000, img: "./img/freezer-briket-280l.jpg", tags: ["envio","cuotas"] },
+    { id: 102, name: "Freezer Gafa 200L", category: "Freezer", price: 459000, img: "./img/freezer-gafa-200l.jpg", tags: ["cuotas"] },
+    { id: 103, name: "Freezer Patrick 320L", category: "Freezer", price: 599000, img: "./img/freezer-patrick-320l.jpg", tags: ["envio"] },
+
+    /* ====== MICROONDAS ====== */
+    { id: 110, name: "Microondas Philco 20L", category: "Microondas", price: 129000, img: "./img/microondas-philco-20l.jpg", tags: ["oferta"] },
+    { id: 111, name: "Microondas BGH 28L Grill", category: "Microondas", price: 169000, img: "./img/microondas-bgh-28l-grill.jpg", tags: ["envio","oferta"] },
+    { id: 112, name: "Microondas Samsung 23L", category: "Microondas", price: 199000, img: "./img/microondas-samsung-23l.jpg", tags: ["cuotas"] },
+
+    /* ====== TERMOTANQUES ====== */
+    { id: 120, name: "Termotanque Rheem 80L", category: "Termotanques", price: 289000, img: "./img/termotanque-rheem-80l.jpg", tags: ["envio","cuotas"] },
+    { id: 121, name: "Termotanque Saiar 80L", category: "Termotanques", price: 269000, img: "./img/termotanque-saiar-80l.jpg", tags: ["cuotas"] },
+
+    /* ====== HORNOS ELÉCTRICOS ====== */
+    { id: 130, name: "Horno Eléctrico ATMA 60L", category: "Hornos eléctricos", price: 239000, img: "./img/horno-electrico-atma-60l.jpg", tags: ["oferta"] },
+    { id: 131, name: "Horno Eléctrico Philips 38L", category: "Hornos eléctricos", price: 199000, img: "./img/horno-electrico-philips-38l.jpg", tags: ["envio"] },
+
+    /* ====== EQUIPOS DE MÚSICA ====== */
+    { id: 140, name: "Equipo Sony M40 Bluetooth", category: "Equipos de música", price: 349000, img: "./img/equipo-musica-sony-m40.jpg", tags: ["cuotas"] },
+    { id: 141, name: "Equipo Philips 500W Party", category: "Equipos de música", price: 399000, img: "./img/equipo-musica-philips-500w.jpg", tags: ["envio","cuotas"] },
+
+    /* ====== CUIDADO PERSONAL ====== */
+    { id: 150, name: "Secador de Pelo Philips 2200W", category: "Cuidado personal", price: 45999, img: "./img/secador-philips-2200w.jpg", tags: ["oferta"] },
+    { id: 151, name: "Afeitadora Philips Series 3000", category: "Cuidado personal", price: 69999, img: "./img/afeitadora-philips-series3000.jpg", tags: ["cuotas"] },
+    { id: 152, name: "Plancha de Pelo GA.MA Ionic", category: "Cuidado personal", price: 54999, img: "./img/plancha-pelo-gama-ionic.jpg", tags: ["envio"] },
+
+    /* ====== AIRES ACONDICIONADOS ====== */
+    { id: 160, name: "Aire Acond. Split 4500W Frío/Calor", category: "Aires", price: 1040000, img: "./img/aire-split-4500w.jpg", tags: ["envio","cuotas"] },
+    { id: 161, name: "Aire Acond. Split 3000W Hisense", category: "Aires", price: 920000, img: "./img/aire-split-3000w-hisense.jpg", tags: ["cuotas"] },
+
+    /* ====== PURIFICADOR ====== */
+    { id: 170, name: "Purificador de Aire Philips", category: "Pequeños", price: 259000, img: "./img/purificador-aire-philips.jpg", tags: ["envio"] }
   ];
 
   /* ================== Config rápida ================== */
@@ -98,71 +173,162 @@
 
   /* ================== Helpers ================== */
   const $ = (s) => document.querySelector(s);
+  const $$ = (s) => document.querySelectorAll(s);
   const money = (n) => n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0});
 
   /* ================== Estado ================== */
   let state = {
+    q: "",
+    category: "all",
+    sort: "relevancia",
+    chips: new Set(), // "envio","cuotas","oferta"
     cart: JSON.parse(localStorage.getItem("cart") || "[]")
   };
 
   /* ================== Render Productos ================== */
-  function renderProducts(){
-    $("#productsGrid").innerHTML = PRODUCTS.map(p=>`
+  const grid = $("#productsGrid");
+
+  function productCard(p){
+    const chipBadges = (p.tags||[]).map(t => `<span class="badge badge--${t}">${t}</span>`).join("");
+    // 4 cuotas: (precio * 2) / 4
+    const cuota = Math.round((p.price * 2) / 4);
+    return `
       <article class="card">
-        <img src="${p.img}" alt="${p.name}" class="card-img">
+        <img src="${p.img}" alt="${p.name}" class="card-img" loading="lazy">
         <div class="card-body">
           <h3 class="card-title">${p.name}</h3>
-          <div class="price">4 cuotas de ${money(Math.round((p.price*2)/4))}</div>
-          <button class="btn btn--primary" onclick="addToCart(${p.id})">Agregar</button>
+          <div class="price">4 cuotas de ${money(cuota)}</div>
+          <div class="badges">${chipBadges}</div>
+          <button class="btn btn--primary" data-add="${p.id}">Agregar</button>
         </div>
       </article>
-    `).join("");
+    `;
+  }
+
+  function applyFilters(list){
+    let res = [...list];
+    if (state.q.trim()){
+      const q = state.q.toLowerCase();
+      res = res.filter(p => (p.name + " " + p.category).toLowerCase().includes(q));
+    }
+    if (state.category !== "all") res = res.filter(p => p.category === state.category);
+    if (state.chips.size) res = res.filter(p => [...state.chips].every(tag => (p.tags||[]).includes(tag)));
+    switch(state.sort){
+      case "precio-asc": res.sort((a,b)=>a.price-b.price); break;
+      case "precio-desc": res.sort((a,b)=>b.price-a.price); break;
+      case "nombre-asc": res.sort((a,b)=>a.name.localeCompare(b.name)); break;
+      default: break;
+    }
+    return res;
+  }
+
+  function render(){
+    const list = applyFilters(PRODUCTS);
+    grid.innerHTML = list.map(productCard).join("") || `<p class="muted">No se encontraron productos.</p>`;
+    $$("[data-add]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = Number(btn.getAttribute("data-add"));
+        const prod = PRODUCTS.find(p=>p.id===id);
+        addToCart(prod);
+      });
+    });
   }
 
   /* ================== Carrito ================== */
-  function persistCart(){ localStorage.setItem("cart",JSON.stringify(state.cart)); }
-  function addToCart(id){ const prod=PRODUCTS.find(p=>p.id===id); const f=state.cart.find(i=>i.id===id); if(f) f.qty++; else state.cart.push({...prod,qty:1}); persistCart(); drawCart(); openCart(); }
-  function removeFromCart(id){ state.cart=state.cart.filter(i=>i.id!==id); persistCart(); drawCart(); }
-  function changeQty(id,d){ const it=state.cart.find(i=>i.id===id); if(!it) return; it.qty=Math.max(1,it.qty+d); persistCart(); drawCart(); }
-  function subtotal(){ return state.cart.reduce((a,b)=>a+b.price*b.qty,0); }
+  const cartCount = $("#cartCount");
+  const cartItems = $("#cartItems");
+  const cartSubtotal = $("#cartSubtotal");
+  const cartTotal = $("#cartTotal");
+  const cartDrawer = $("#cartDrawer");
+  const backdrop = $("#backdrop");
 
+  function addToCart(prod){
+    const found = state.cart.find(i=>i.id===prod.id);
+    if (found) found.qty += 1; else state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+    persistCart(); openCart(); drawCart();
+  }
+  function removeFromCart(id){
+    state.cart = state.cart.filter(i=>i.id!==id);
+    persistCart(); drawCart();
+  }
+  function changeQty(id, delta){
+    const item = state.cart.find(i=>i.id===id);
+    if(!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    persistCart(); drawCart();
+  }
+  function persistCart(){
+    localStorage.setItem("cart", JSON.stringify(state.cart));
+    cartCount.textContent = state.cart.reduce((a,b)=>a+b.qty,0);
+  }
   function drawCart(){
-    $("#cartItems").innerHTML = state.cart.length? state.cart.map(i=>`
+    if(!state.cart.length){
+      cartItems.innerHTML = `<p class="muted">Tu carrito está vacío.</p>`;
+      cartSubtotal.textContent = money(0);
+      cartTotal.textContent = money(0);
+      persistCart();
+      return;
+    }
+    cartItems.innerHTML = state.cart.map(i=>`
       <div class="cartline">
-        <div class="cartline__info"><strong>${i.name}</strong><span>${money(i.price)}</span></div>
-        <div class="cartline__qty">
-          <button onclick="changeQty(${i.id},-1)">-</button><span>${i.qty}</span><button onclick="changeQty(${i.id},1)">+</button>
-          <button onclick="removeFromCart(${i.id})" class="link danger">Quitar</button>
+        <div class="cartline__info">
+          <strong>${i.name}</strong>
+          <span>${money(i.price)}</span>
         </div>
-      </div>`).join("") : `<p>Tu carrito está vacío.</p>`;
-    let total=subtotal();
-    $("#cartSubtotal").textContent=money(total);
-    $("#cartTotal").textContent=money(total);
+        <div class="cartline__qty">
+          <button type="button" onclick="changeQty(${i.id},-1)">−</button>
+          <span>${i.qty}</span>
+          <button type="button" onclick="changeQty(${i.id},1)">+</button>
+          <button type="button" class="link danger" onclick="removeFromCart(${i.id})">Quitar</button>
+        </div>
+      </div>
+    `).join("");
+
+    const sub = state.cart.reduce((a,b)=>a + b.price*b.qty, 0);
+    cartSubtotal.textContent = money(sub);
+    cartTotal.textContent = money(sub);
+    persistCart();
   }
 
-  /* ================== WhatsApp ================== */
-  $("#checkoutBtn").addEventListener("click",()=>{
-    if(!state.cart.length) return alert("Carrito vacío");
-    const lines=state.cart.map(i=>`• ${i.name} x${i.qty} — ${money(i.price*i.qty)}`).join("%0A");
-    const total=$("#cartTotal").textContent;
-    const msg=`Hola Nahuel, quiero comprar:%0A${lines}%0A%0ATotal: ${total}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
+  function openCart(){ cartDrawer.classList.add("open"); backdrop.classList.add("show"); }
+  function closeCart(){ cartDrawer.classList.remove("open"); backdrop.classList.remove("show"); }
+  $("#openCart").addEventListener("click", openCart);
+  $("#closeCart").addEventListener("click", closeCart);
+  $("#backdrop").addEventListener("click", closeCart);
+  $("#clearCart").addEventListener("click", ()=>{ state.cart = []; persistCart(); drawCart(); });
+
+  /* ================== Búsqueda / Filtros ================== */
+  $("#searchBtn").addEventListener("click", ()=>{ state.q = $("#searchInput").value || ""; render(); });
+  $("#searchInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ state.q = e.target.value; render(); }});
+  $("#categoryFilter").addEventListener("change", (e)=>{ state.category = e.target.value; render(); });
+  $("#sortBy").addEventListener("change", (e)=>{ state.sort = e.target.value; render(); });
+
+  $$("#promoChips .chip").forEach(ch=>{
+    ch.addEventListener("click", ()=>{
+      const t = ch.dataset.chip;
+      if(state.chips.has(t)) state.chips.delete(t); else state.chips.add(t);
+      ch.classList.toggle("chip--active");
+      render();
+    });
+  });
+  $("#clearChips").addEventListener("click", ()=>{
+    state.chips.clear();
+    $$("#promoChips .chip").forEach(ch=>ch.classList.remove("chip--active"));
+    render();
   });
 
-  /* ================== Drawer ================== */
-  function openCart(){ $("#cartDrawer").classList.add("open"); $("#backdrop").classList.add("show"); }
-  function closeCart(){ $("#cartDrawer").classList.remove("open"); $("#backdrop").classList.remove("show"); }
-  $("#openCart").addEventListener("click",openCart);
-  $("#closeCart").addEventListener("click",closeCart);
-  $("#backdrop").addEventListener("click",closeCart);
-  $("#clearCart").addEventListener("click",()=>{ state.cart=[]; persistCart(); drawCart(); });
+  // WhatsApp flotante + año
+  const wlink = `https://wa.me/${WHATSAPP_NUMBER}?text=Hola Nahuel, tengo una consulta`;
+  $("#whatsFloating").setAttribute("href", wlink);
+  document.getElementById("year").textContent = new Date().getFullYear();
 
-  /* ================== Init ================== */
-  document.getElementById("year").textContent=new Date().getFullYear();
-  renderProducts(); drawCart();
+  // Init
+  persistCart(); drawCart(); render();
   </script>
 </body>
 </html>
+
+
 
 
 
